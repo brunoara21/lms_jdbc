@@ -28,8 +28,8 @@ public class AuthorDAO extends BaseDAO<Author> {
 	}
 
 	public void updateAuthor(Author author) throws ClassNotFoundException, SQLException {
-		prepareStmt("UPDATE tbl_author SET AuthorName = ? WHERE authorId = ?",
-				Arrays.asList(author.getAuthorName(), author.getAuthorId() ));
+		prepareStmt("UPDATE tbl_author SET authorName = ? WHERE authorId = ?",
+				Arrays.asList(author.getAuthorName(), author.getAuthorId()));
 	}
 
 	public void deleteAuthor(Author author) throws ClassNotFoundException, SQLException {
@@ -41,15 +41,34 @@ public class AuthorDAO extends BaseDAO<Author> {
 		return readStmt("SELECT * FROM tbl_author", null);
 	}
 
+	public Author readAuthor(Integer authorId) throws ClassNotFoundException, SQLException {
+		return readStmtOne("SELECT * FROM tbl_author WHERE authorId = ?", Arrays.asList(authorId));
+	}
+
+	public List<Author> readAllAuthors(String searchName) throws ClassNotFoundException, SQLException {
+		return readStmt("SELECT * FROM tbl_author WHERE authorName LIKE '%?%'", Arrays.asList(searchName));
+	}
+
 	@Override
 	public List<Author> extractData(ResultSet rs) throws ClassNotFoundException, SQLException {
 		List<Author> authors = new ArrayList<>();
 		while (rs.next()) {
 			Author author = new Author();
-			author.setAuthorId(rs.getInt("AuthorId"));
-			author.setAuthorName(rs.getString("AuthorName"));
+			author.setAuthorId(rs.getInt("authorId"));
+			author.setAuthorName(rs.getString("authorName"));
 			authors.add(author);
 		}
 		return authors;
+	}
+
+	@Override
+	public Author extractDataOne(ResultSet rs) throws ClassNotFoundException, SQLException {
+		Author author = null;
+		if (rs.next()) {
+			author = new Author();
+			author.setAuthorId(rs.getInt("authorId"));
+			author.setAuthorName(rs.getString("authorName"));
+		}
+		return author;
 	}
 }

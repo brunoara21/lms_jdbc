@@ -52,4 +52,16 @@ public class LibraryBranchDAO extends BaseDAO<LibraryBranch> {
 		}
 		return libraryBranches;
 	}
+
+	@Override
+	public LibraryBranch extractDataOne(ResultSet rs) throws ClassNotFoundException, SQLException {
+		LibraryBranch libBranch = null;
+		while(rs.next()) {
+			libBranch = new LibraryBranch();
+			libBranch.setBranchId(rs.getInt("branchId"));
+			libBranch.setBranchName(rs.getString("branchName"));
+			libBranch.setBranchAddress(rs.getString("branchAddress"));
+		}
+		return libBranch;
+	}
 }

@@ -18,7 +18,8 @@ import java.util.List;
 public abstract class BaseDAO<T> {
 
 	protected Connection conn = null;
-
+	private ResultSet rs = null;
+	
 	public BaseDAO(Connection conn) {
 		this.conn = conn;
 	}
@@ -28,10 +29,11 @@ public abstract class BaseDAO<T> {
 		Integer i = 1;
 		for (Object o : vals) {
 			pstmt.setObject(i, o);
+
 			i++;
 		}
 		pstmt.executeUpdate();
-		ResultSet rs = pstmt.getGeneratedKeys();
+		rs = pstmt.getGeneratedKeys();
 		while (rs.next()) {
 			return rs.getInt(1);
 		}
@@ -57,9 +59,29 @@ public abstract class BaseDAO<T> {
 				i++;
 			}
 		}
-		ResultSet rs = pstmt.executeQuery();
+		rs = pstmt.executeQuery();
 		return extractData(rs);
 	}
+	
+	public T readStmtOne(String sql, List<Object> vals) throws ClassNotFoundException, SQLException {
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		if (vals != null) {
+			Integer i = 1;
+			for (Object o : vals) {
+				pstmt.setObject(i, o);
+				i++;
+			}
+		}
+		rs = pstmt.executeQuery();
+		return extractDataOne(rs);
+	}
 
+
+	public ResultSet getResultSet() {
+		return rs;
+	}
+	
 	abstract public List<T> extractData(ResultSet rs) throws ClassNotFoundException, SQLException;
+	abstract public T extractDataOne(ResultSet rs) throws ClassNotFoundException, SQLException;
+
 }

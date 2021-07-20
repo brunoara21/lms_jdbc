@@ -32,12 +32,25 @@ public class Util {
 	private final String username = "root";
 	private final String password = "rooT20!21Root";
 	
+	private final String testDriver = "org.h2.Driver";
+	private final String testUrl = "jdbc:h2:tcp://localhost/server~/test;MODE=MySQL";
+	private final String testUsername = "sa";
+	private final String testPassword = "";
+	
 	private Connection conn = null;
+	private Connection testConn = null;
 	
 	public Connection getConnection() throws ClassNotFoundException, SQLException {
 		Class.forName(driver);
-		Connection conn = DriverManager.getConnection(url, username, password);
+		conn = DriverManager.getConnection(url, username, password);
 		conn.setAutoCommit(false);
 		return conn;
+	}
+	
+	public Connection getTestConnection() throws ClassNotFoundException, SQLException {
+		Class.forName(testDriver);
+		testConn = DriverManager.getConnection(testUrl, testUsername, testPassword);
+		testConn.setAutoCommit(false);
+		return testConn;
 	}
 }

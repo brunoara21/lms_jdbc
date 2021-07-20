@@ -16,7 +16,7 @@ public class main {
 
 		
 
-		MenuOptions menus = new MenuOptions();
+		MenuOptions menus = MenuOptions.getMenu();
 		menus.mainMenu();
 		
 		
