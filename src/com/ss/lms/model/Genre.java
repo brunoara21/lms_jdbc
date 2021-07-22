@@ -83,12 +83,16 @@ public class Genre extends BaseModel {
 	}
 
 	public Boolean checkIfRequired(String str) {
-		switch (str) {
-		case "Name":
-			return true;
-		default:
-			return false;
+		if (str != null) {
+			switch (str) {
+			case "Name":
+				return true;
+			default:
+				return false;
+			}
 		}
+		
+		return false;
 	}
 
 	public List<String> getValues() {

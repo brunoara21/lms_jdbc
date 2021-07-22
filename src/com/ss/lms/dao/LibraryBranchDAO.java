@@ -11,9 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.ss.lms.model.LibraryBranch;
+import com.ss.lms.model.LibraryBranch;
 
 /**
- * @author Bruno
+ * @libBranch Bruno
  *
  */
 public class LibraryBranchDAO extends BaseDAO<LibraryBranch> {
@@ -22,9 +23,9 @@ public class LibraryBranchDAO extends BaseDAO<LibraryBranch> {
 		super(conn);
 	}
 
-	public void createLibraryBranch(LibraryBranch libBranch) throws ClassNotFoundException, SQLException {
-		prepareStmt("INSERT INTO  tbl_library_branch VALUES(?, ?)",
-				Arrays.asList(libBranch.getBranchId(), libBranch.getBranchName(), libBranch.getBranchAddress()));
+	public Integer createLibraryBranch(LibraryBranch libBranch) throws ClassNotFoundException, SQLException {
+		return prepareStmtReturnPK("INSERT INTO tbl_library_branch (branchName, branchAddress) VALUES(?, ?)",
+				Arrays.asList(libBranch.getBranchName(), libBranch.getBranchAddress()));
 	}
 
 	public void updateLibraryBranch(LibraryBranch libBranch) throws ClassNotFoundException, SQLException {
@@ -37,10 +38,18 @@ public class LibraryBranchDAO extends BaseDAO<LibraryBranch> {
 
 	}
 
-	public List<LibraryBranch> readAllLibraryBranch() throws ClassNotFoundException, SQLException {
+	public List<LibraryBranch> readAllLibraryBranches() throws ClassNotFoundException, SQLException {
 		return readStmt("SELECT * FROM tbl_library_branch", null);
 	}
 
+	public LibraryBranch readLibraryBranch(Integer libBranchId) throws ClassNotFoundException, SQLException {
+		return readStmtOne("SELECT * FROM tbl_library_branch WHERE branchId = ?", Arrays.asList(libBranchId));
+	}
+
+	public List<LibraryBranch> readAllLibraryBranches(String searchName) throws ClassNotFoundException, SQLException {
+		return readStmt("SELECT * FROM tbl_library_branch WHERE branchName LIKE ?", Arrays.asList("%" + searchName +"%"));
+	}
+	
 	@Override
 	public List<LibraryBranch> extractData(ResultSet rs) throws ClassNotFoundException, SQLException {
 		List<LibraryBranch> libraryBranches = new ArrayList<>();
@@ -49,6 +58,7 @@ public class LibraryBranchDAO extends BaseDAO<LibraryBranch> {
 			libBranch.setBranchId(rs.getInt("branchId"));
 			libBranch.setBranchName(rs.getString("branchName"));
 			libBranch.setBranchAddress(rs.getString("branchAddress"));
+			libraryBranches.add(libBranch);
 		}
 		return libraryBranches;
 	}

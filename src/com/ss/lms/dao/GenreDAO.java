@@ -41,6 +41,14 @@ public class GenreDAO extends BaseDAO<Genre> {
 		return readStmt("SELECT * FROM tbl_genre", null);
 	}
 
+	public Genre readGenre(Integer genreId) throws ClassNotFoundException, SQLException {
+		return readStmtOne("SELECT * FROM tbl_genre WHERE genreId = ?", Arrays.asList(genreId));
+	}
+
+	public List<Genre> readAllGenres(String searchName) throws ClassNotFoundException, SQLException {
+		return readStmt("SELECT * FROM tbl_genre WHERE genreName LIKE ?", Arrays.asList("%" + searchName +"%"));
+	}
+	
 	@Override
 	public List<Genre> extractData(ResultSet rs) throws ClassNotFoundException, SQLException {
 		List<Genre> genres = new ArrayList<>();

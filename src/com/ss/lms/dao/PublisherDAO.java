@@ -30,7 +30,7 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 
 	public void updatePublisher(Publisher publisher) throws ClassNotFoundException, SQLException {
 		prepareStmt("UPDATE tbl_publisher "
-				+ "SET publisherName = ?, SET publisherAddress = ?, SET publisherPhone = ?"
+				+ "SET publisherName = ?, publisherAddress = ?, publisherPhone = ?"
 				+ "WHERE publisherId = ?",
 				Arrays.asList(publisher.getPublisherName(), 
 						publisher.getPublisherAddress(),
@@ -47,6 +47,14 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 		return readStmt("SELECT * FROM tbl_publisher", null);
 	}
 
+	public Publisher readPublisher(Integer publisherId) throws ClassNotFoundException, SQLException {
+		return readStmtOne("SELECT * FROM tbl_publisher WHERE publisherId = ?", Arrays.asList(publisherId));
+	}
+
+	public List<Publisher> readAllPublishers(String searchName) throws ClassNotFoundException, SQLException {
+		return readStmt("SELECT * FROM tbl_publisher WHERE publisherName LIKE ?", Arrays.asList("%" + searchName +"%"));
+	}
+	
 	@Override
 	public List<Publisher> extractData(ResultSet rs) throws ClassNotFoundException, SQLException {
 		List<Publisher> publishers = new ArrayList<>();

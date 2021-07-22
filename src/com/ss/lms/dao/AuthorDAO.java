@@ -46,7 +46,7 @@ public class AuthorDAO extends BaseDAO<Author> {
 	}
 
 	public List<Author> readAllAuthors(String searchName) throws ClassNotFoundException, SQLException {
-		return readStmt("SELECT * FROM tbl_author WHERE authorName LIKE '%?%'", Arrays.asList(searchName));
+		return readStmt("SELECT * FROM tbl_author WHERE authorName LIKE ?", Arrays.asList("%" + searchName +"%"));
 	}
 
 	@Override

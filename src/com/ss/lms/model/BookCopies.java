@@ -3,15 +3,21 @@
  */
 package com.ss.lms.model;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Bruno
  *
  */
-public class BookCopies {
+public class BookCopies extends BaseModel {
 
 		private LibraryBranch branch;	// FK
 		private Book book;				// FK
 		private Integer noOfCopies;
+		
+		private final static List<String> values = Arrays.asList("Book", "Library Branch", "Copies");
+
 		
 		/**
 		 * @return the branch
@@ -48,6 +54,49 @@ public class BookCopies {
 		 */
 		public void setNoOfCopies(Integer noOfCopies) {
 			this.noOfCopies = noOfCopies;
+		}
+		@Override
+		public void setValues(List<Object> inputs) {
+			if (inputs.get(0) != null) {
+				this.book = (Book) inputs.get(0);
+			}
+			if (inputs.get(1) != null) {
+				this.branch= (LibraryBranch) inputs.get(1);
+			}
+			if (inputs.get(2) != null) {
+				this.noOfCopies = (Integer)inputs.get(2);
+			}			
+		}
+		@Override
+		public Boolean checkIfRequired(String str) {
+			if (str != null) {
+				switch (str) {
+				case "Book":
+					return true;
+				case "Library Branch":
+					return true;
+				case "Copies":
+					return false;
+				default:
+					return false;
+				}
+			}
+
+			return false;
+		}
+		@Override
+		public List<String> getValues() {
+			return values;
+		}
+		@Override
+		public String getTableName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		@Override
+		public String getName() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 		

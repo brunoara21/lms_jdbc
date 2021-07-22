@@ -29,7 +29,7 @@ public class BorrowerDAO extends BaseDAO<Borrower> {
 	}
 
 	public void updateBorrower(Borrower borrower) throws ClassNotFoundException, SQLException {
-		prepareStmt("UPDATE tbl_borrower " + "SET name = ?, SET address = ?, SET phone = ?" + "WHERE cardNo = ?",
+		prepareStmt("UPDATE tbl_borrower SET name = ?, address = ?, phone = ? WHERE cardNo = ?",
 				Arrays.asList(borrower.getBorrowerName(), borrower.getBorrowerAddress(), borrower.getBorrowerPhone(),
 						borrower.getCardNo()));
 	}
@@ -43,6 +43,14 @@ public class BorrowerDAO extends BaseDAO<Borrower> {
 		return readStmt("SELECT * FROM tbl_borrower", null);
 	}
 
+	public Borrower readBorrower(Integer cardNo) throws ClassNotFoundException, SQLException {
+		return readStmtOne("SELECT * FROM tbl_borrower WHERE cardNo = ?", Arrays.asList(cardNo));
+	}
+
+	public List<Borrower> readAllBorrowers(String searchName) throws ClassNotFoundException, SQLException {
+		return readStmt("SELECT * FROM tbl_borrower WHERE name LIKE ?", Arrays.asList("%" + searchName +"%"));
+	}
+	
 	@Override
 	public List<Borrower> extractData(ResultSet rs) throws ClassNotFoundException, SQLException {
 		List<Borrower> borrowers = new ArrayList<>();
