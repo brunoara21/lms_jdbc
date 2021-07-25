@@ -20,12 +20,17 @@ import com.diogonunes.jcolor.Attribute;
  */
 public class Util {
 
+	public static final AnsiFormat fSysAdd = new AnsiFormat(Attribute.BRIGHT_GREEN_TEXT(), BOLD());
 	public static final AnsiFormat fSysAlert = new AnsiFormat(Attribute.BRIGHT_RED_TEXT(), BOLD());
 	public static final AnsiFormat fSysMessage = new AnsiFormat(BRIGHT_WHITE_TEXT(), BOLD());
 	public static final AnsiFormat fSysOption = new AnsiFormat(BRIGHT_WHITE_TEXT(), ITALIC());
 	public static final AnsiFormat fSysOutput = new AnsiFormat(Attribute.CYAN_TEXT());
 	public static final AnsiFormat fAdminMessage = new AnsiFormat(Attribute.TEXT_COLOR(255, 165, 0), BOLD());
 	public static final AnsiFormat fAdminOption = new AnsiFormat(Attribute.TEXT_COLOR(255, 165, 0), ITALIC());
+	public static final AnsiFormat fLibrarianMessage = new AnsiFormat(Attribute.TEXT_COLOR(242,214,0), BOLD());
+	public static final AnsiFormat fLibrarianOption = new AnsiFormat(Attribute.TEXT_COLOR(242,214,0), ITALIC());
+	public static final AnsiFormat fBorrowerMessage = new AnsiFormat(Attribute.TEXT_COLOR(0, 128, 0), BOLD());
+	public static final AnsiFormat fBorrowerOption = new AnsiFormat(Attribute.TEXT_COLOR(0, 128, 0), ITALIC());
 
 	private final String driver = "com.mysql.cj.jdbc.Driver";
 	private final String url = "jdbc:mysql://localhost:3306/library";

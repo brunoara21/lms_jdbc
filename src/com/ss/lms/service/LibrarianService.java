@@ -13,7 +13,6 @@ import com.ss.lms.dao.BookAuthorsDAO;
 import com.ss.lms.dao.BookCopiesDAO;
 import com.ss.lms.dao.BookDAO;
 import com.ss.lms.dao.BookGenresDAO;
-import com.ss.lms.dao.BookLoansDAO;
 import com.ss.lms.dao.BorrowerDAO;
 import com.ss.lms.dao.GenreDAO;
 import com.ss.lms.dao.LibraryBranchDAO;
@@ -24,7 +23,6 @@ import com.ss.lms.model.Book;
 import com.ss.lms.model.BookAuthors;
 import com.ss.lms.model.BookCopies;
 import com.ss.lms.model.BookGenres;
-import com.ss.lms.model.BookLoans;
 import com.ss.lms.model.Borrower;
 import com.ss.lms.model.Genre;
 import com.ss.lms.model.LibraryBranch;
@@ -34,7 +32,7 @@ import com.ss.lms.model.Publisher;
  * @author Bruno
  *
  */
-public class AdminService extends BaseService{
+public class LibrarianService extends BaseService {
 
 	Util util = new Util();
 
@@ -65,10 +63,14 @@ public class AdminService extends BaseService{
 			return updateLibraryBranch((LibraryBranch) toUpdate);
 		} else if (toUpdate instanceof Book) {
 			return updateBook((Book) toUpdate);
+		} else if (toUpdate instanceof BookCopies) {
+			return updateBookCopies((BookCopies) toUpdate);
 		}
 
 		return "Something went wrong when updating.";
 	}
+
+	
 
 	public String delete(BaseModel toDelete) {
 		if (toDelete instanceof Publisher) {
@@ -445,6 +447,62 @@ public class AdminService extends BaseService{
 		return null;
 	}
 
+	public List<Book> readBooksFromBranch(LibraryBranch branch) {
+		Connection conn = null;
+		try {
+			try {
+				conn = util.getConnection();
+				BookAuthorsDAO badao = new BookAuthorsDAO(conn);
+				BookGenresDAO bgdao = new BookGenresDAO(conn);
+				BookCopiesDAO bcdao = new BookCopiesDAO(conn);
+
+				List<Book> books = bcdao.readAllBookCopies_Books(branch.getBranchId());
+				for(Book b: books) {
+					b.setBookAuthors(badao.readBookAuthors_Authors(b.getBookId()));
+					b.setBookGenres(bgdao.readAllBookGenres_Genres(b.getBookId()));
+					b.setBookBranches(bcdao.readAllBookCopies_Branches(b.getBookId()));
+				}
+				
+				return books;
+			} catch (Exception e) {
+				e.printStackTrace();
+
+			} finally {
+				if (conn != null) {
+					conn.close();
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
+	public BookCopies readBookCopiesFromBookBranch(Book book, LibraryBranch branch) {
+		Connection conn = null;
+		try {
+			try {
+				conn = util.getConnection();
+				BookCopiesDAO bcdao = new BookCopiesDAO(conn);
+				BookCopies bc = bcdao.readBookCopies(book.getBookId(), branch.getBranchId());
+				
+				return bc;
+			} catch (Exception e) {
+				e.printStackTrace();
+
+			} finally {
+				if (conn != null) {
+					conn.close();
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
 	public String addAuthor(Author toAdd) {
 		Connection conn = null;
 		try {
@@ -930,81 +988,6 @@ public class AdminService extends BaseService{
 		return null;
 	}
 
-	public Borrower readBorrower(Integer cardNo) {
-		Connection conn = null;
-		try {
-			try {
-				conn = util.getConnection();
-				BorrowerDAO bdao = new BorrowerDAO(conn);
-				Borrower borrower = bdao.readBorrower(cardNo);
-				// TODO POPULATE CHILD ELEMENTS
-				return borrower;
-			} catch (Exception e) {
-				e.printStackTrace();
-
-			} finally {
-				if (conn != null) {
-					conn.close();
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	public List<BookLoans> readBookLoansFromBorrower(Borrower borrower) {
-		Connection conn = null;
-		try {
-			try {
-				conn = util.getConnection();
-				BookLoansDAO bldao = new BookLoansDAO(conn);
-				List<BookLoans> bookLoans = bldao.readAllBookLoans_FromBorrower(borrower);
-				
-				// TODO POPULATE CHILD ELEMENTS
-				return bookLoans;
-			} catch (Exception e) {
-				e.printStackTrace();
-
-			} finally {
-				if (conn != null) {
-					conn.close();
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-	
-public String updateDueDate(BookLoans bookLoan) {
-	Connection conn = null;
-	try {
-		try {
-			conn = util.getConnection();
-			BookLoansDAO bldao = new BookLoansDAO(conn);
-			bldao.updateBookLoans(bookLoan);
-			conn.commit();
-			return "Book Loan succesfully updated. New due date is '" + bookLoan.getDueDate().toLocalDateTime().toLocalDate() + "'";
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			conn.rollback();
-			return "Book Loan could not be updated";
-
-		} finally {
-			if (conn != null) {
-				conn.close();
-			}
-		}
-	} catch (SQLException e) {
-		e.printStackTrace();
-		return "Book Loan could not be updated, problem with connection.";
-	}
-}
-	
 	public String addLibraryBranch(LibraryBranch toAdd) {
 		Connection conn = null;
 		try {
@@ -1155,6 +1138,32 @@ public String updateDueDate(BookLoans bookLoan) {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return "Book Copies could not be added, problem with connection.";
+		}
+	}
+	
+	private String updateBookCopies(BookCopies toUpdate) {
+		Connection conn = null;
+		try {
+			try {
+				conn = util.getConnection();
+				BookCopiesDAO bcdao = new BookCopiesDAO(conn);
+				bcdao.updateBookCopies(toUpdate);
+				conn.commit();
+				return "Book Copies successfully updated";
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				conn.rollback();
+				return "Book Copies could not be updated";
+
+			} finally {
+				if (conn != null) {
+					conn.close();
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return "Book Copies could not be updated, problem with connection.";
 		}
 	}
 }

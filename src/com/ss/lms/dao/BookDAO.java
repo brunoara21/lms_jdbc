@@ -18,7 +18,7 @@ import com.ss.lms.model.Book;
  */
 public class BookDAO extends BaseDAO<Book> {
 
-	PublisherDAO pdao = null;
+	private PublisherDAO pdao = null;
 
 	public BookDAO(Connection conn) {
 		super(conn);
@@ -27,12 +27,13 @@ public class BookDAO extends BaseDAO<Book> {
 
 	public Integer createBook(Book book) throws ClassNotFoundException, SQLException {
 
+		
 		return prepareStmtReturnPK("INSERT INTO tbl_book (title, publisherId) VALUES(?,?)",
 				Arrays.asList(book.getTitle(), book.getPublisher().getPublisherId()));
 	}
 
 	public void updateBook(Book book) throws ClassNotFoundException, SQLException {
-		prepareStmt("UPDATE tbl_book " + "SET title = ?, publisherId = ?" + "WHERE bookId = ?",
+		prepareStmt("UPDATE tbl_book SET title = ?, publisherId = ? WHERE bookId = ?",
 				Arrays.asList(book.getTitle(), book.getPublisher().getPublisherId(), book.getBookId()));
 	}
 
@@ -50,7 +51,7 @@ public class BookDAO extends BaseDAO<Book> {
 	}
 
 	public List<Book> readAllBooks(String searchName) throws ClassNotFoundException, SQLException {
-		return readStmt("SELECT * FROM tbl_book WHERE bookName LIKE ?", Arrays.asList("%" + searchName + "%"));
+		return readStmt("SELECT * FROM tbl_book WHERE title LIKE ?", Arrays.asList("%" + searchName + "%"));
 	}
 
 	@Override

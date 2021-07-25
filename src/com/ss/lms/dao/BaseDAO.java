@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import com.ss.lms.model.Book;
+
 /**
  * @author Bruno
  * @param <T>
@@ -61,6 +63,19 @@ public abstract class BaseDAO<T> {
 		}
 		rs = pstmt.executeQuery();
 		return extractData(rs);
+	}
+	
+	public ResultSet readStmtResultSet(String sql, List<Object> vals) throws ClassNotFoundException, SQLException {
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		if (vals != null) {
+			Integer i = 1;
+			for (Object o : vals) {
+				pstmt.setObject(i, o);
+				i++;
+			}
+		}
+		rs = pstmt.executeQuery();
+		return rs;
 	}
 	
 	public T readStmtOne(String sql, List<Object> vals) throws ClassNotFoundException, SQLException {

@@ -5,6 +5,7 @@ package com.ss.lms.model;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Bruno
@@ -83,6 +84,22 @@ public class BookCopies extends BaseModel {
 			}
 
 			return false;
+		}
+		
+		@Override
+		public int hashCode() {
+			return Objects.hash(book, branch);
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			BookCopies other = (BookCopies) obj;
+			return Objects.equals(book, other.book) && Objects.equals(branch, other.branch);
 		}
 		@Override
 		public List<String> getValues() {

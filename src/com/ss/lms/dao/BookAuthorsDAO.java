@@ -10,8 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.ss.lms.model.Author;
+import com.ss.lms.model.Book;
 import com.ss.lms.model.BookAuthors;
-import com.ss.lms.model.LibraryBranch;
 
 /**
  * @author Bruno
@@ -19,68 +20,103 @@ import com.ss.lms.model.LibraryBranch;
  */
 public class BookAuthorsDAO extends BaseDAO<BookAuthors> {
 
+	private BookDAO bdao = null;
+	private AuthorDAO adao = null;
+	private PublisherDAO pdao = null;
+
 	public BookAuthorsDAO(Connection conn) {
 		super(conn);
-		// TODO Auto-generated constructor stub
+		bdao = new BookDAO(conn);
+		adao = new AuthorDAO(conn);
+		pdao = new PublisherDAO(conn);
 	}
 
 	public Integer createBookAuthors(BookAuthors bookAuthors) throws ClassNotFoundException, SQLException {
-		return prepareStmtReturnPK("INSERT INTO tbl_book_genres VALUES(?, ?)",
-				Arrays.asList(bookAuthors.getAuthor(), bookAuthors.getBook()));
+		return prepareStmtReturnPK("INSERT INTO tbl_book_authors (authorId, bookId) VALUES(?, ?)",
+				Arrays.asList(bookAuthors.getAuthor().getAuthorId(), bookAuthors.getBook().getBookId()));
 	}
-
+	
 	public void updateBookAuthors_Book(BookAuthors bookAuthors) throws ClassNotFoundException, SQLException {
-		prepareStmt("UPDATE tbl_book_genres SET bookId = ? WHERE bookId = ? AND genreId = ?",
+		prepareStmt("UPDATE tbl_book_authors SET bookId = ? WHERE bookId = ? AND authorId = ?",
 				Arrays.asList(bookAuthors.getBook().getBookId(), bookAuthors.getBook().getBookId(),
 						bookAuthors.getAuthor().getAuthorId()));
 	}
 
-	public void updateBookAuthors_Author(BookAuthors bookAuthors) throws ClassNotFoundException, SQLException {
-		prepareStmt("UPDATE tbl_book_genres SET genreId = ? WHERE bookId = ? AND genreId = ?",
-				Arrays.asList(bookAuthors.getAuthor().getAuthorId(), bookAuthors.getBook().getBookId(),
+	public void updateBookAuthors_Author(BookAuthors bookAuthors, Author fromUpdate) throws ClassNotFoundException, SQLException {
+		prepareStmt("UPDATE tbl_book_authors SET authorId = ? WHERE bookId = ? AND authorId = ?",
+				Arrays.asList(fromUpdate.getAuthorId(), bookAuthors.getBook().getBookId(),
 						bookAuthors.getAuthor().getAuthorId()));
 	}
-	
+
 	public void deleteBookAuthors(BookAuthors bookAuthors) throws ClassNotFoundException, SQLException {
-		prepareStmt("DELETE FROM tbl_book_genres WHERE bookId = ? AND genreId = ?", Arrays.asList(bookAuthors.getBook().getBookId(),
-				bookAuthors.getAuthor().getAuthorId()));
+		prepareStmt("DELETE FROM tbl_book_authors WHERE bookId = ? AND authorId = ?",
+				Arrays.asList(bookAuthors.getBook().getBookId(), bookAuthors.getAuthor().getAuthorId()));
 
 	}
 
 	public List<BookAuthors> readAllBookAuthors() throws ClassNotFoundException, SQLException {
-		return readStmt("SELECT * FROM tbl_book_genres", null);
+		return readStmt("SELECT * FROM tbl_book_authors", null);
 	}
 
-	/*
-	 * public BookAuthors readBookAuthors(Integer bookAuthorsId) throws
-	 * ClassNotFoundException, SQLException { return
-	 * readStmtOne("SELECT * FROM tbl_book_genres WHERE branchId = ?",
-	 * Arrays.asList(bookAuthorsId)); }
-	 */
+	public List<Book> readBookAuthors_Books(Integer authorId) throws ClassNotFoundException, SQLException {
+		ResultSet rs = readStmtResultSet("SELECT tbl_book.bookId, title, publisherId FROM tbl_book_authors "
+				+ "INNER JOIN tbl_book ON tbl_book.bookId = tbl_book_authors.bookId "
+				+ "INNER JOIN tbl_author ON tbl_book_authors.authorId = tbl_author.authorId "
+				+ "WHERE tbl_author.authorId = ?;", Arrays.asList(authorId));
+		List<Book> books = new ArrayList<>();
+		while (rs.next()) {
+			Book book = new Book();
+			book.setBookId(rs.getInt("bookId"));
+			book.setTitle(rs.getString("title"));
+			book.setPublisher(pdao.readPublisher(rs.getInt("publisherId")));
+			books.add(book);
+		}
+		return books;
+	}
 
-	/*
-	 * public List<BookAuthors> readAllBookAuthors(String searchName) throws
-	 * ClassNotFoundException, SQLException { return
-	 * readStmt("SELECT * FROM tbl_book_genres WHERE branchName LIKE ?",
-	 * Arrays.asList("%" + searchName + "%")); }
-	 */
+	public List<Author> readBookAuthors_Authors(Integer bookId) throws ClassNotFoundException, SQLException {
+		ResultSet rs = readStmtResultSet("SELECT tbl_author.authorId, authorName FROM tbl_book_authors "
+				+ "INNER JOIN tbl_book ON tbl_book.bookId = tbl_book_authors.bookId "
+				+ "INNER JOIN tbl_author ON tbl_book_authors.authorId = tbl_author.authorId "
+				+ "WHERE tbl_book.bookId = ?;", Arrays.asList(bookId));
+		List<Author> authors = new ArrayList<>();
+		while (rs.next()) {
+			Author author = new Author();
+			author.setAuthorId(rs.getInt("authorId"));
+			author.setAuthorName(rs.getString("authorName"));
+			authors.add(author);
+		}
+		return authors;
+	}
+
+	public BookAuthors readBookAuthors(Integer bookId, Integer authorId) throws ClassNotFoundException, SQLException {
+		return readStmtOne("SELECT * FROM tbl_book_authors WHERE bookId = ? AND authorId = ?",
+				Arrays.asList(bookId, authorId));
+	}
+
+
 
 	@Override
 	public List<BookAuthors> extractData(ResultSet rs) throws ClassNotFoundException, SQLException {
 		List<BookAuthors> bookAuthorsArr = new ArrayList<>();
-		while(rs.next()) {
+		while (rs.next()) {
 			BookAuthors bookAuthors = new BookAuthors();
-			//bookAuthors.setBook(rs.getInt("bookId"));
-			//bookAuthors.setBranchName(rs.getString("genreId"));
-			//bookAuthorsArr.add(bookAuthors);
+			bookAuthors.setBook(bdao.readBook(rs.getInt("bookId")));
+			bookAuthors.setAuthor(adao.readAuthor(rs.getInt("authorId")));
+			bookAuthorsArr.add(bookAuthors);
 		}
 		return bookAuthorsArr;
 	}
 
 	@Override
 	public BookAuthors extractDataOne(ResultSet rs) throws ClassNotFoundException, SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		BookAuthors bookAuthors = null;
+		while (rs.next()) {
+			bookAuthors = new BookAuthors();
+			bookAuthors.setBook(bdao.readBook(rs.getInt("bookId")));
+			bookAuthors.setAuthor(adao.readAuthor(rs.getInt("authorId")));
+		}
+		return bookAuthors;
 	}
 
 }

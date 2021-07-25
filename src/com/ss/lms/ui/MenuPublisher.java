@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import com.ss.lms.model.Publisher;
 import com.ss.lms.service.AdminService;
 import com.ss.lms.service.Util;
+import com.ss.lms.ui.MenuOptions.Role;
 
 /**
  * @author Bruno
@@ -28,7 +29,7 @@ public class MenuPublisher extends MenuBase {
 		switch (inp) {
 		case 1: // Add
 			Publisher toAdd = new Publisher();
-			menu.printQuitPrompt();
+			menu.printQuitPrompt(Role.ADMINISTRATOR);
 					//////////// List all values to update ////////////
 			toAdd = (Publisher) menu.formatAdd(toAdd);
 			break;
@@ -42,9 +43,9 @@ public class MenuPublisher extends MenuBase {
 			index = Integer.parseInt(menu.handleInput("Input: "));
 			toUpdate = publishers.get(index - 1);
 			//////////// Update Operation////////////
-			menu.printQuitPrompt();
+			menu.printQuitPrompt(Role.ADMINISTRATOR);
 			//////////// List all values to update ////////////
-			toUpdate = (Publisher) menu.formatUpdate(toUpdate);
+			toUpdate = (Publisher) menu.formatUpdate(toUpdate, Role.ADMINISTRATOR);
 			break;
 		case 3: // Delete
 			//////////// Display all and choose entry ////////////

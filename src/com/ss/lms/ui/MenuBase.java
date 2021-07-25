@@ -19,7 +19,7 @@ public abstract class MenuBase {
 	
 	protected Integer crudBase(BaseModel type) {
 		System.out.println(Util.fAdminMessage.format("Operations for " + type.getTableName() + "\n"));
-		System.out.print(menu.formatString(Util.fAdminOption, Arrays.asList("Add", "Update", "Delete", "Read")));
+		System.out.print(menu.formatString(Util.fAdminOption, Arrays.asList("Add", "Update", "Delete", "Read", "Back")));
 
 		return Integer.parseInt(menu.handleInput("Input: "));
 	}

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import com.ss.lms.model.Author;
 import com.ss.lms.service.AdminService;
 import com.ss.lms.service.Util;
+import com.ss.lms.ui.MenuOptions.Role;
 
 /**
  * @author Bruno
@@ -27,7 +28,7 @@ public class MenuAuthor extends MenuBase {
 		switch (inp) {
 		case 1: // Add
 			Author toAdd = new Author();
-			menu.printQuitPrompt();
+			menu.printQuitPrompt(Role.ADMINISTRATOR);
 			//////////// List all values to update ////////////
 			toAdd = (Author) menu.formatAdd(toAdd);
 			break;
@@ -41,9 +42,9 @@ public class MenuAuthor extends MenuBase {
 			index = Integer.parseInt(menu.handleInput("Input: "));
 			toUpdate = publishers.get(index - 1);
 			//////////// Update Operation////////////
-			menu.printQuitPrompt();
+			menu.printQuitPrompt(Role.ADMINISTRATOR);
 			//////////// List all values to update ////////////
-			toUpdate = (Author) menu.formatUpdate(toUpdate);
+			toUpdate = (Author) menu.formatUpdate(toUpdate, Role.ADMINISTRATOR);
 			break;
 		case 3: // Delete
 			//////////// Display all and choose entry ////////////

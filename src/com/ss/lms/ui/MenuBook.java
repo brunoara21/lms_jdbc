@@ -11,6 +11,7 @@ import com.ss.lms.model.BaseModel;
 import com.ss.lms.model.Book;
 import com.ss.lms.service.AdminService;
 import com.ss.lms.service.Util;
+import com.ss.lms.ui.MenuOptions.Role;
 
 /**
  * @book Bruno
@@ -28,7 +29,7 @@ public class MenuBook extends MenuBase {
 		switch (inp) {
 		case 1: // Add
 			Book toAdd = new Book();
-			menu.printQuitPrompt();
+			menu.printQuitPrompt(Role.ADMINISTRATOR);
 			//////////// List all values to update ////////////
 			toAdd = menu.formatAdd(toAdd);
 			break;
@@ -37,21 +38,21 @@ public class MenuBook extends MenuBase {
 			Book toUpdate = new Book();
 			books = new ArrayList<>();
 			books = adminSer.readBooks();
-			System.out.println(Util.fAdminMessage.format("Choose the " + toUpdate.getTableName() + " to update: \n"));
 			System.out.print(menu.formatString(Util.fSysOutput, books));
+			System.out.println(Util.fAdminMessage.format("\nChoose the " + toUpdate.getTableName() + " number to update: "));
 			index = Integer.parseInt(menu.handleInput("Input: "));
 			toUpdate = books.get(index - 1);
 			//////////// Update Operation////////////
-			menu.printQuitPrompt();
+			menu.printQuitPrompt(Role.ADMINISTRATOR);
 			//////////// List all values to update ////////////
-			toUpdate = (Book) menu.formatUpdate(toUpdate);
+			toUpdate = menu.formatUpdate(toUpdate);
 			break;
 		case 3: // Delete
 			//////////// Display all and choose entry ////////////
 			books = adminSer.readBooks();
 			Book toDelete = new Book();
-			System.out.println(Util.fAdminMessage.format("Choose the " + toDelete.getTableName() + " to delete: \n"));
 			System.out.print(menu.formatString(Util.fSysOutput, books));
+			System.out.println(Util.fAdminMessage.format("\nChoose the " + toDelete.getTableName() + " number to delete: "));
 			index = Integer.parseInt(menu.handleInput("Input: "));
 			toDelete = (Book) menu.deleteBase(books.get(index - 1));
 			break;
@@ -61,15 +62,17 @@ public class MenuBook extends MenuBase {
 
 			System.out.println(books.stream().map((a) -> Util.fSysOutput.format(a.toString()))
 					.collect(Collectors.joining(Util.fSysOutput.format("\n-------------------------------\n"))));
-
 			break;
+		case 5:
+			return;
 		default:
-			menu.adminMenu();
+			//menu.adminMenu();
 			return;
 		}
 
 		System.out.println();
 		displayCRUDMenu();
+		return;
 
 	}
 	

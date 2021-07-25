@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import com.ss.lms.service.Util;
+
 /**
  * @author Bruno
  *
@@ -43,6 +45,8 @@ public class BookAuthors extends BaseModel{
 		public void setBook(Book book) {
 			this.book = book;
 		}
+		
+		
 		
 		@Override
 		public void setValues(List<Object> inputs) {
