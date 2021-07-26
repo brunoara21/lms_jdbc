@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import com.ss.lms.dao.BookAuthorsDAO;
@@ -19,7 +18,6 @@ import com.ss.lms.dao.BorrowerDAO;
 import com.ss.lms.dao.LibraryBranchDAO;
 import com.ss.lms.model.Book;
 import com.ss.lms.model.BookCopies;
-import com.ss.lms.model.BookGenres;
 import com.ss.lms.model.BookLoans;
 import com.ss.lms.model.Borrower;
 import com.ss.lms.model.LibraryBranch;
@@ -220,7 +218,7 @@ public class BorrowerService {
 
 				List<Book> books = bcdao.readAllBookCopies_Books_EnoughCopies(branch.getBranchId());
 				for (Book b : books) {
-					b.setBookAuthors(badao.readBookAuthors_Authors(b.getBookId()));
+					b.setBookAuthors(badao.readAllBookAuthors_Authors(b.getBookId()));
 					b.setBookGenres(bgdao.readAllBookGenres_Genres(b.getBookId()));
 					b.setBookBranches(bcdao.readAllBookCopies_Branches(b.getBookId()));
 				}

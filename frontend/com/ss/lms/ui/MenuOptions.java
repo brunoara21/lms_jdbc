@@ -73,7 +73,7 @@ public class MenuOptions {
 						adminSer = new AdminService();
 						librarianSer = new LibrarianService();
 						borrowerSer = new BorrowerService();
-						
+
 						mPublisher = new MenuPublisher();
 						mAuthor = new MenuAuthor();
 						mGenre = new MenuGenre();
@@ -84,171 +84,197 @@ public class MenuOptions {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 		return localMenu;
 	}
 
 	public void mainMenu() {
-		printMenu(Menu.MAIN);
+		Boolean quit = false;
+		while (!quit) {
+			printMenu(Menu.MAIN);
 
-		Integer inp = null;
-		String strIn = handleInput("Input: ");
-		try {
-			inp = Integer.parseInt(strIn);
-			switch (inp) {
-			case 1:
-				librarianMenu();
-				break;
-			case 2:
-				adminMenu();
-				break;
-			case 3:
-				borrowerMenu();
-				break;
-			case 4:
-				System.out
-						.println(Util.fSysAlert.format("Thank you for using the Library Management System. Goodbye!"));
-				return;
-			default:
-				mainMenu();
-				return;
+			Integer inp = null;
+			String strIn = handleInput("Input: ");
+			try {
+				inp = Integer.parseInt(strIn);
+				switch (inp) {
+				case 1:
+					librarianMenu();
+					break;
+				case 2:
+					adminMenu();
+					break;
+				case 3:
+					borrowerMenu();
+					break;
+				case 4:
+					System.out.println(
+							Util.fSysAlert.format("Thank you for using the Library Management System. Goodbye!"));
+					quit = true;
+					break;
+				default:
+					break;
+				}
+			} catch (Exception e) {
+				// e.printStackTrace();
 			}
-			mainMenu();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+
+		return;
 	}
 
 	public void librarianMenu() {
-		printMenu(Menu.LIB1);
+		Boolean quit = false;
+		while (!quit) {
+			try {
+				printMenu(Menu.LIB1);
 
-		Integer inp = Integer.parseInt(handleInput("Input: "));
-		switch (inp) {
-		case 1: // Library Branches
-			//////////// Display all and choose entry ////////////
-			List<LibraryBranch> branches = librarianSer.readLibraryBranches();
-			List<Object> branchL = new ArrayList<>();
-			for (LibraryBranch lb : branches) {
-				branchL.add(lb);
+				Integer inp = Integer.parseInt(handleInput("Input: "));
+				switch (inp) {
+				case 1: // Library Branches
+					//////////// Display all and choose entry ////////////
+					List<LibraryBranch> branches = librarianSer.readLibraryBranches();
+					List<Object> branchL = new ArrayList<>();
+					for (LibraryBranch lb : branches) {
+						branchL.add(lb);
+					}
+					branchL.add("Back");
+					System.out.print(formatString(Util.fSysOutput, branchL));
+
+					printMenu(Menu.LIB2); // LIB2
+					inp = Integer.parseInt(handleInput("Input: "));
+					if (inp == branches.size() + 1) {
+						quit = true;
+						break;
+					}
+					librarianThreeMenu(branches.get(inp - 1));
+					break;
+				case 2: // Back
+					quit = true;
+					break;
+				default:
+					break;
+				}
+			} catch (Exception e) {
+
 			}
-			branchL.add("Back");
-			System.out.print(formatString(Util.fSysOutput, branchL));
-
-			printMenu(Menu.LIB2); // LIB2
-			inp = Integer.parseInt(handleInput("Input: "));
-			if (inp == branches.size() + 1) {
-				librarianMenu();
-				return;
-			}
-			librarianThreeMenu(branches.get(inp - 1));
-
-			break;
-		case 2: // Back
-			return;
-		default:
-			return;
 		}
-		librarianMenu();
 		return;
 	}
 
 	public void librarianThreeMenu(BaseModel selection) {
-		printMenu(Menu.LIB3, selection);
+		Boolean quit = false;
+		while (!quit) {
+			try {
+				printMenu(Menu.LIB3, selection);
 
-		String inp = handleInput("Input: ");
-		Integer inpI = Integer.parseInt(inp);
-		switch (inpI) {
-		case 1: // Update Details of Library
-			//////////// Update Operation////////////
-			printQuitPrompt(Role.LIBRARIAN);
-			//////////// List all values to update ////////////
-			selection = formatUpdate(selection, Role.LIBRARIAN);
-			break;
-		case 2: // Add copies of Book to the Branch
-			List<Book> books = librarianSer.readBooksFromBranch((LibraryBranch) selection);
-			List<Object> bookL = new ArrayList<>();
-			for (Book b : books) {
-				bookL.add(b);
-			}
-			bookL.add("Back");
-			System.out.print(formatString(Util.fSysOutput, bookL));
-			printQuitPrompt(Role.LIBRARIAN);
-			System.out.println(
-					Util.fLibrarianMessage.format("Choose the Book you want to add copies of, to your Branch"));
-			inp = handleInput("Input: ");
-			if (inp.equals("QUIT")) {
-				break;
-			} else {
-				inpI = Integer.parseInt(inp);
-			}
-			if (inpI == books.size() + 1) {
-				librarianThreeMenu(selection);
-				break;
-			}
+				String inp = handleInput("Input: ");
+				Integer inpI = Integer.parseInt(inp);
+				switch (inpI) {
+				case 1: // Update Details of Library
+					//////////// Update Operation////////////
+					printQuitPrompt(Role.LIBRARIAN);
+					//////////// List all values to update ////////////
+					selection = formatUpdate(selection, Role.LIBRARIAN);
+					break;
+				case 2: // Add copies of Book to the Branch
+					List<Book> books = librarianSer.readBooksFromBranch((LibraryBranch) selection);
+					List<Object> bookL = new ArrayList<>();
+					for (Book b : books) {
+						bookL.add(b);
+					}
+					bookL.add("Back");
+					System.out.print(formatString(Util.fSysOutput, bookL));
+					printQuitPrompt(Role.LIBRARIAN);
+					System.out.println(
+							Util.fLibrarianMessage.format("Choose the Book you want to add copies of, to your Branch"));
+					inp = handleInput("Input: ");
+					if (inp.equals("QUIT")) {
+						break;
+					} else {
+						inpI = Integer.parseInt(inp);
+					}
+					if (inpI == books.size() + 1) {
+						librarianThreeMenu(selection);
+						break;
+					}
 
-			BookCopies bc = librarianSer.readBookCopiesFromBookBranch(books.get(inpI - 1), (LibraryBranch) selection);
-			System.out.println(Util.fLibrarianMessage
-					.format("Existing number of copies: " + (bc.getNoOfCopies() != null ? bc.getNoOfCopies() : 0)));
-			System.out.println(Util.fLibrarianMessage.format("Enter new number of copies: "));
-			inp = handleInput("Input: ");
-			if (inp.equals("QUIT")) {
-				break;
-			} else {
-				inpI = Integer.parseInt(inp);
+					BookCopies bc = librarianSer.readBookCopiesFromBookBranch(books.get(inpI - 1),
+							(LibraryBranch) selection);
+					System.out.println(Util.fLibrarianMessage.format(
+							"Existing number of copies: " + (bc.getNoOfCopies() != null ? bc.getNoOfCopies() : 0)));
+					System.out.println(Util.fLibrarianMessage.format("Enter new number of copies: "));
+					inp = handleInput("Input: ");
+					if (inp.equals("QUIT")) {
+						break;
+					} else {
+						inpI = Integer.parseInt(inp);
+					}
+
+					if (inpI < 0) {
+						System.out.println(Util.fSysAlert.format("Aborted Copies update due to negative number"));
+						break;
+					}
+
+					bc.setNoOfCopies(inpI);
+					System.out.println(librarianSer.update(bc));
+
+					break;
+				case 3:
+					quit = true;
+					break;
+				default:
+					quit = true;
+					break;
+				}
+			} catch (Exception e) {
+
 			}
-
-			if (inpI < 0) {
-				System.out.println(Util.fSysAlert.format("Aborted Copies update due to negative number"));
-				break;
-			}
-
-			bc.setNoOfCopies(inpI);
-			System.out.println(librarianSer.update(bc));
-
-			break;
-		case 3:
-			return;
-		default:
-			return;
 		}
-		librarianThreeMenu(selection);
 		return;
 	}
 
 	public void adminMenu() {
-		printMenu(Menu.ADMIN);
+		Boolean quit = false;
+		while (!quit) {
+			try {
+				printMenu(Menu.ADMIN);
 
-		Integer inp = Integer.parseInt(handleInput("Input: "));
-		switch (inp) {
-		case 1: // Book
-			mBook.displayCRUDMenu();
-			break;
-		case 2: // Author
-			mAuthor.displayCRUDMenu();
-			break;
-		case 3: // Genres
-			mGenre.displayCRUDMenu();
-			break;
-		case 4: // Publishers
-			mPublisher.displayCRUDMenu();
-			break;
-		case 5: // Library Branches
-			mLibraryBranch.displayCRUDMenu();
-			break;
-		case 6: // Borrower
-			mBorrower.displayCRUDMenu();
-			break;
-		case 7: // OverrideDueDate
-			overrideDueDate();
-			break;
-		case 8: // Back
-			return;
-		default:
-			return;
+				Integer inp = Integer.parseInt(handleInput("Input: "));
+				switch (inp) {
+				case 1: // Book
+					mBook.displayCRUDMenu();
+					break;
+				case 2: // Author
+					mAuthor.displayCRUDMenu();
+					break;
+				case 3: // Genres
+					mGenre.displayCRUDMenu();
+					break;
+				case 4: // Publishers
+					mPublisher.displayCRUDMenu();
+					break;
+				case 5: // Library Branches
+					mLibraryBranch.displayCRUDMenu();
+					break;
+				case 6: // Borrower
+					mBorrower.displayCRUDMenu();
+					break;
+				case 7: // OverrideDueDate
+					overrideDueDate();
+					break;
+				case 8: // Back
+					quit = true;
+					break;
+				default:
+					break;
+				}
+			} catch (Exception e) {
+
+			}
 		}
-		adminMenu();
 		return;
 	}
 
@@ -258,195 +284,206 @@ public class MenuOptions {
 			System.out.println(Util.fAdminMessage.format("Please enter the Card Number to override a Book Due Date"));
 			String inp = handleInput("Input: ");
 			Integer inpI = 0;
-			if(inp.equals("QUIT")) {
+			if (inp.equals("QUIT")) {
 				return;
-			}else {
+			} else {
 				inpI = Integer.parseInt(inp);
 			}
 			try {
 				borrower = adminSer.readBorrower(inpI);
 			} catch (Exception e) {
-				
+
 			} finally {
-				if(borrower == null) {
-					System.out.println(Util.fSysAlert.format("Card Number was invalid or not found. Try again or enter 'QUIT' to go back to Main Menu"));
+				if (borrower == null) {
+					System.out.println(Util.fSysAlert.format(
+							"Card Number was invalid or not found. Try again or enter 'QUIT' to go back to Main Menu"));
 				}
 			}
 		}
-		
-		////////////Display all and choose entry ////////////
+
+		//////////// Display all and choose entry ////////////
 		List<BookLoans> bookloans = adminSer.readBookLoansFromBorrower(borrower);
 		List<Object> loansL = new ArrayList<>();
 		for (BookLoans lb : bookloans) {
 			loansL.add(lb);
 		}
 		loansL.add("Back");
-		System.out.print(formatString(Util.fSysOutput, loansL));	
+		System.out.print(formatString(Util.fSysOutput, loansL));
 		printQuitPrompt(Role.ADMINISTRATOR);
-		System.out.println(Util.fAdminMessage.format("Pick the Book you want to return:"));			
-		
+		System.out.println(Util.fAdminMessage.format("Pick the Book you want to return:"));
+
 		String inp = handleInput("Input: ");
-		if(inp.equals("QUIT")) {
+		if (inp.equals("QUIT")) {
 			return;
 		}
 		Integer inpI = Integer.parseInt(inp);
 		if (inpI == bookloans.size() + 1) {
 			return;
 		}
-		
+
 		// Return book from BookLoan
-		BookLoans bookLoan = bookloans.get(inpI -1);
-		
-		System.out.println(Util.fAdminMessage.format("Current Due Date is '" + bookLoan.getDueDate().toLocalDateTime().toLocalDate() + "' "));			
+		BookLoans bookLoan = bookloans.get(inpI - 1);
+
+		System.out.println(Util.fAdminMessage
+				.format("Current Due Date is '" + bookLoan.getDueDate().toLocalDateTime().toLocalDate() + "' "));
 		LocalDate ld = null;
-		while(ld == null) {
+		while (ld == null) {
 			System.out.println(Util.fAdminMessage.format("Enter new year: "));
 			String year = handleInput("Input: ");
-			if(inp.equals("QUIT")) {
+			if (inp.equals("QUIT")) {
 				return;
 			}
-			
+
 			System.out.println(Util.fAdminMessage.format("Enter new month: "));
 			String month = handleInput("Input: ");
-			if(inp.equals("QUIT")) {
+			if (inp.equals("QUIT")) {
 				return;
 			}
-			
+
 			System.out.println(Util.fAdminMessage.format("Enter new day: "));
 			String day = handleInput("Input: ");
-			if(inp.equals("QUIT")) {
+			if (inp.equals("QUIT")) {
 				return;
 			}
 
 			DateTimeFormatter dateFormatter = DateTimeFormatter.BASIC_ISO_DATE;
 			try {
-				ld = LocalDate.parse(year+month+day,dateFormatter);
-				
-				if(ld.compareTo(LocalDate.now()) < 0) {
+				ld = LocalDate.parse(year + month + day, dateFormatter);
+
+				if (ld.compareTo(LocalDate.now()) < 0) {
 					System.out.println(Util.fSysAlert.format("New date cannot be before today's date."));
 					ld = null;
 				} else {
 					bookLoan.setDueDate(Timestamp.valueOf(ld.atTime(12, 0)));
 					System.out.println(adminSer.updateDueDate(bookLoan));
 				}
-			} catch (DateTimeParseException e){
+			} catch (DateTimeParseException e) {
 				System.out.println(Util.fSysAlert.format("New date is not a correct date."));
 				ld = null;
-			} 
+			}
 		}
 	}
-	
+
 	private void borrowerMenu() {
 		Borrower borrower = null;
 		while (borrower == null) {
 			printMenu(Menu.BORR);
 			String inp = handleInput("Input: ");
 			Integer inpI = 0;
-			if(inp.equals("QUIT")) {
+			if (inp.equals("QUIT")) {
 				return;
-			}else {
+			} else {
 				inpI = Integer.parseInt(inp);
 			}
 			try {
 				borrower = borrowerSer.readBorrower(inpI);
 			} catch (Exception e) {
-				
+
 			} finally {
-				if(borrower == null) {
-					System.out.println(Util.fSysAlert.format("Card Number was invalid or not found. Try again or enter 'QUIT' to go back to Main Menu"));
+				if (borrower == null) {
+					System.out.println(Util.fSysAlert.format(
+							"Card Number was invalid or not found. Try again or enter 'QUIT' to go back to Main Menu"));
 				}
 			}
 		}
-		
+
 		borrowerOneMenu(borrower);
 	}
 
 	private void borrowerOneMenu(Borrower borrower) {
-		printMenu(Menu.BORR1, borrower);
-		String inp = handleInput("Input: ");
-		Integer inpI = Integer.parseInt(inp);
-		List<LibraryBranch> branches = new ArrayList<>();
-		List<Object> branchL = new ArrayList<>();
-		switch (inpI) {
-		case 1: // Check out Book
-			//////////// Display all and choose entry ////////////
-			branches = borrowerSer.readLibraryBranches();
-			branchL = new ArrayList<>();
-			for (LibraryBranch lb : branches) {
-				branchL.add(lb);
-			}
-			branchL.add("Back");
-			System.out.print(formatString(Util.fSysOutput, branchL));	
-			printQuitPrompt(Role.BORROWER);
-			System.out.println(Util.fBorrowerMessage.format("Pick the Branch you want to check out from:"));			
-			
-			inp = handleInput("Input: ");
-			if(inp.equals("QUIT")) {
-				break;
-			}
-			inpI = Integer.parseInt(inp);
-			if (inpI == branches.size() + 1) {
-				break;
-			}
-			
-			LibraryBranch branch = branches.get(inpI -1);
-			List<Book> books = borrowerSer.readBooksFromBranchEnoughCopies(branch);
-			List<Object> bookL = new ArrayList<>();
-			for (Book b : books) {
-				bookL.add(b);
-			}
-			bookL.add("Back");
-			System.out.print(formatString(Util.fSysOutput, bookL));	
-			printQuitPrompt(Role.BORROWER);
-			System.out.println(Util.fBorrowerMessage.format("Pick the Book you want to check out: "));			
-			
-			inp = handleInput("Input: ");
-			if(inp.equals("QUIT")) {
-				break;
-			}
-			inpI = Integer.parseInt(inp);
-			if (inpI == books.size() + 1) {
-				break;
-			}
+		Boolean quit = false;
+		while (!quit) {
+			try {
+				printMenu(Menu.BORR1, borrower);
+				String inp = handleInput("Input: ");
+				Integer inpI = Integer.parseInt(inp);
+				List<LibraryBranch> branches = new ArrayList<>();
+				List<Object> branchL = new ArrayList<>();
+				switch (inpI) {
+				case 1: // Check out Book
+					//////////// Display all and choose entry ////////////
+					branches = borrowerSer.readLibraryBranches();
+					branchL = new ArrayList<>();
+					for (LibraryBranch lb : branches) {
+						branchL.add(lb);
+					}
+					branchL.add("Back");
+					System.out.print(formatString(Util.fSysOutput, branchL));
+					printQuitPrompt(Role.BORROWER);
+					System.out.println(Util.fBorrowerMessage.format("Pick the Branch you want to check out from:"));
 
-			// Add Entry to Book Loans
-			BookLoans bl = new BookLoans();
-			Book book = books.get(inpI -1);
-			bl.setValues(Arrays.asList(book, branch, borrower, null, null, null));
-			System.out.println(borrowerSer.addBookLoan(bl));			
-			break;
-		case 2: // Return Book
-			
-			////////////Display all and choose entry ////////////
-			List<BookLoans> bookloans = borrowerSer.readBookLoansFromBorrower(borrower);
-			List<Object> loansL = new ArrayList<>();
-			for (BookLoans lb : bookloans) {
-				loansL.add(lb);
+					inp = handleInput("Input: ");
+					if (inp.equals("QUIT")) {
+						break;
+					}
+					inpI = Integer.parseInt(inp);
+					if (inpI == branches.size() + 1) {
+						break;
+					}
+
+					LibraryBranch branch = branches.get(inpI - 1);
+					List<Book> books = borrowerSer.readBooksFromBranchEnoughCopies(branch);
+					List<Object> bookL = new ArrayList<>();
+					for (Book b : books) {
+						bookL.add(b);
+					}
+					bookL.add("Back");
+					System.out.print(formatString(Util.fSysOutput, bookL));
+					printQuitPrompt(Role.BORROWER);
+					System.out.println(Util.fBorrowerMessage.format("Pick the Book you want to check out: "));
+
+					inp = handleInput("Input: ");
+					if (inp.equals("QUIT")) {
+						break;
+					}
+					inpI = Integer.parseInt(inp);
+					if (inpI == books.size() + 1) {
+						break;
+					}
+
+					// Add Entry to Book Loans
+					BookLoans bl = new BookLoans();
+					Book book = books.get(inpI - 1);
+					bl.setValues(Arrays.asList(book, branch, borrower, null, null, null));
+					System.out.println(borrowerSer.addBookLoan(bl));
+					break;
+				case 2: // Return Book
+
+					//////////// Display all and choose entry ////////////
+					List<BookLoans> bookloans = borrowerSer.readBookLoansFromBorrower(borrower);
+					List<Object> loansL = new ArrayList<>();
+					for (BookLoans lb : bookloans) {
+						loansL.add(lb);
+					}
+					loansL.add("Back");
+					System.out.print(formatString(Util.fSysOutput, loansL));
+					printQuitPrompt(Role.BORROWER);
+					System.out.println(Util.fBorrowerMessage.format("Pick the Book you want to return:"));
+
+					inp = handleInput("Input: ");
+					if (inp.equals("QUIT")) {
+						break;
+					}
+					inpI = Integer.parseInt(inp);
+					if (inpI == bookloans.size() + 1) {
+						break;
+					}
+
+					// Return book from BookLoan
+					BookLoans bookLoan = bookloans.get(inpI - 1);
+					System.out.println(borrowerSer.updateReturnBookLoan(bookLoan));
+					break;
+				case 3: // Back
+					quit = true;
+					break;
+				default:
+					quit = true;
+					break;
+				}
+			} catch (Exception e) {
+
 			}
-			loansL.add("Back");
-			System.out.print(formatString(Util.fSysOutput, loansL));	
-			printQuitPrompt(Role.BORROWER);
-			System.out.println(Util.fBorrowerMessage.format("Pick the Book you want to return:"));			
-			
-			inp = handleInput("Input: ");
-			if(inp.equals("QUIT")) {
-				break;
-			}
-			inpI = Integer.parseInt(inp);
-			if (inpI == bookloans.size() + 1) {
-				break;
-			}
-			
-			// Return book from BookLoan
-			BookLoans bookLoan = bookloans.get(inpI -1);
-			System.out.println(borrowerSer.updateReturnBookLoan(bookLoan));
-			break;
-		case 3: // Back
-			return;
-		default:
-			return;
 		}
-		borrowerOneMenu(borrower);
 		return;
 	}
 
@@ -470,9 +507,10 @@ public class MenuOptions {
 					"Welcome Borrower to the SS Library Management System. Please enter your Card Number to proceed:\n"));
 			break;
 		case BORR1:
-			System.out.println(Util.fBorrowerMessage.format(
-					"Welcome '" + model.getName() + "' to the SS Library Management System. Please select a command:\n"));
-			System.out.print(formatString(Util.fBorrowerOption, Arrays.asList("Check out a book", "Return a Book", "Back")));
+			System.out.println(Util.fBorrowerMessage.format("Welcome '" + model.getName()
+					+ "' to the SS Library Management System. Please select a command:\n"));
+			System.out.print(
+					formatString(Util.fBorrowerOption, Arrays.asList("Check out a book", "Return a Book", "Back")));
 			break;
 		case LIB1:
 			System.out.println(Util.fLibrarianMessage
@@ -611,16 +649,7 @@ public class MenuOptions {
 						break;
 					} else {
 						noInpCnt++;
-						System.out.println("NUM OF AUTHORS: " + authors.size());
 						inputs.add(authors);
-						for (Author a : authors) {
-							if (a != null) {
-								System.out.println(a);
-
-							} else {
-								System.out.println("NULL");
-							}
-						}
 					}
 				}
 
@@ -657,7 +686,6 @@ public class MenuOptions {
 						inputs.add(genres);
 					}
 				} else { // Regular Input
-					System.out.println("ADDED TO INPUTS");
 					inputs.add(genres);
 				}
 			} else if (value == "Library Branches") {
@@ -681,14 +709,9 @@ public class MenuOptions {
 					inputs = null;
 					break;
 				} else if (inp.equals("N/A")) { // No input
-					if (libBranches.size() == 0) { // N/A on first LibraryBranch input - abort
-						inputs = null;
-						break;
-					} else {
-						noInpCnt++;
-					}
 
-					System.out.println("ADDED TO INPUTS");
+					noInpCnt++;
+
 					inputs.add(libBranches);
 				}
 			} else { // Regular Input Handling
@@ -715,7 +738,6 @@ public class MenuOptions {
 					noInpCnt++;
 					inputs.add(null);
 				} else { // Regular Input
-					System.out.println("ADDED TO INPUTS");
 					if (value == "Publisher ID") {
 						inputs.add(adminSer.readPublisher(Integer.parseInt(inp)));
 					} else {
@@ -729,40 +751,37 @@ public class MenuOptions {
 			System.out.println(Util.fSysAlert.format("Aborted update of " + toAdd.getTableName()));
 		} else {
 			toAdd.setValues(inputs);
-			for (Author a : toAdd.getBookAuthors()) {
-				if (a != null) {
-					System.out.println(a);
-
-				} else {
-					System.out.println("NULL");
-				}
-			}
-
 			System.out.println(adminSer.add(toAdd));
-
 		}
 
 		for (LibraryBranch libB : libBranches) {
-			if (libB != null) {
-				outp = Util.fAdminMessage.format("\t" + ". Please enter a Number of Copies for the Branch "
-						+ libB.getBranchId() + "-" + libB.getBranchName() + ":");
+			String copies = null;
+			while (copies == null) {
+				if (libB != null) {
+					outp = Util.fAdminMessage.format("\t" + ". Please enter a Number of Copies for the Branch "
+							+ libB.getBranchId() + "-" + libB.getBranchName() + ":");
 
-				System.out.println(outp);
-				inp = handleInput("Input : ");
-				if (inp != null) {
-					if (inp.equals("QUIT")) {
-						inputs = null;
-						break;
-					} else {
-						BookCopies bc = new BookCopies();
-						bc.setValues(Arrays.asList(toAdd, libB, Integer.parseInt(inp)));
-						System.out.println(adminSer.addBookCopies(bc));
+					System.out.println(outp);
+					copies = handleInput("Input : ");
+					if (copies != null) {
+						if (copies.equals("QUIT")) {
+							break;
+						} else {
+							if (Integer.parseInt(copies) < 0) {
+								System.out.println(Util.fSysAlert
+										.format("Number of Copies of book cannot be negative, try again."));
+								copies = null;
+							} else {
+
+								BookCopies bc = new BookCopies();
+								bc.setValues(Arrays.asList(toAdd, libB, Integer.parseInt(copies)));
+								System.out.println(adminSer.addBookCopies(bc));
+							}
+						}
 					}
 				}
 			}
 		}
-		System.out.println("FINISHED ADD");
-
 		return toAdd;
 	}
 
@@ -796,11 +815,10 @@ public class MenuOptions {
 		if (inputs == null || inputs.size() == noInpCnt) {
 			System.out.println(Util.fSysAlert.format("Aborted update of " + toUpdate.getTableName()));
 		} else {
-			System.out.println(Util.fSysAlert.format("Aborted update of " + toUpdate.getTableName()));
 			toUpdate.setValues(inputs);
 			if (role == Role.ADMINISTRATOR) {
 				System.out.println(adminSer.update(toUpdate));
-			} else if (role == Role.ADMINISTRATOR) {
+			} else if (role == Role.LIBRARIAN) {
 				System.out.println(librarianSer.update(toUpdate));
 			}
 		}
@@ -812,8 +830,6 @@ public class MenuOptions {
 
 		String inp = null, value, outp = null;
 		Boolean updated = false;
-		List<Object> inputs = new ArrayList<>();
-		List<LibraryBranch> libBranches = new ArrayList<>();
 		List<Publisher> dPublishers = new ArrayList<>();
 		System.out.println(Util.fAdminMessage
 				.format("You have chosen to update " + toUpdate.getTableName() + ": " + toUpdate.getName()));
@@ -849,8 +865,6 @@ public class MenuOptions {
 
 						System.out.println(outp);
 						inp = handleInput("Input : ");
-
-						Author toAdd = null;
 
 						if (inp.equals("QUIT")) { // Aborts Update
 							break;
@@ -896,7 +910,6 @@ public class MenuOptions {
 
 				// Input Branching
 				if (inp.equals("QUIT")) { // Aborts Add
-					inputs = null;
 					break;
 				} else if (inp.equals("N/A")) { // No input
 					continue;
@@ -931,8 +944,6 @@ public class MenuOptions {
 
 						System.out.println(outp);
 						inp = handleInput("Input : ");
-
-						Genre toAdd = null;
 
 						if (inp.equals("QUIT")) { // Aborts Update
 							break;
@@ -979,7 +990,6 @@ public class MenuOptions {
 
 				// Input Branching
 				if (inp.equals("QUIT")) { // Aborts Add
-					inputs = null;
 					break;
 				} else if (inp.equals("N/A")) { // No input
 					continue;
@@ -1006,7 +1016,6 @@ public class MenuOptions {
 
 				// Input Branching
 				if (inp.equals("QUIT")) { // Aborts Add
-					inputs = null;
 					break;
 				} else if (inp.equals("N/A")) { // No input
 					continue;
@@ -1030,18 +1039,6 @@ public class MenuOptions {
 		} else {
 			System.out.println("Finished Updating Book");
 		}
-		/*
-		 * for (LibraryBranch libB : libBranches) { if (libB != null) { outp =
-		 * Util.fAdminMessage.format("\t" +
-		 * ". Please enter a Number of Copies for the Branch " + libB.getBranchId() +
-		 * "-" + libB.getBranchName() + ":");
-		 * 
-		 * System.out.println(outp); inp = handleInput("Input : "); if (inp != null) {
-		 * if (inp.equals("QUIT")) { inputs = null; break; } else { BookCopies bc = new
-		 * BookCopies(); bc.setValues(Arrays.asList(toUpdate, libB,
-		 * Integer.parseInt(inp))); System.out.println(adminSer.addBookCopies(bc)); } }
-		 * } }
-		 */
 
 		return toUpdate;
 	}
@@ -1084,6 +1081,7 @@ public class MenuOptions {
 		return f.format(sb.toString());
 	}
 
+	@SuppressWarnings("resource")
 	protected String handleInput(String message) {
 		System.out.print(Util.fSysMessage.format("\n" + message));
 		Scanner scn = new Scanner(System.in);

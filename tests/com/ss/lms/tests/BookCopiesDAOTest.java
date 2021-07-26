@@ -11,15 +11,14 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.ss.lms.dao.LibraryBranchDAO;
 import com.ss.lms.dao.BookCopiesDAO;
 import com.ss.lms.dao.BookDAO;
-import com.ss.lms.model.LibraryBranch;
+import com.ss.lms.dao.LibraryBranchDAO;
 import com.ss.lms.model.Book;
 import com.ss.lms.model.BookCopies;
+import com.ss.lms.model.LibraryBranch;
 import com.ss.lms.service.Util;
 
 /**
@@ -70,7 +69,7 @@ public class BookCopiesDAOTest {
 	}
 
 	@Test
-	public void test_add_book_authors() throws ClassNotFoundException, SQLException {
+	public void test_add_book_copies() throws ClassNotFoundException, SQLException {
 		BookCopies toAdd = new BookCopies();
 
 		LibraryBranchDAO lbdao = new LibraryBranchDAO(conn);
@@ -87,46 +86,53 @@ public class BookCopiesDAOTest {
 		BookCopies result = badao.readBookCopies(b.getBookId(), lb.getBranchId());
 
 		Assert.assertEquals(toAdd, result);
-		//Assert.assertEquals("BookCopies ID: " + pK + "\nBookCopies Title: " + bookTitle + "\nPublisher ID: " + "Publisher Empty",result.toStringTest());
 	}
 
 	@Test
-	@Ignore("Not ready yet")
-	public void test_update_book_authors() throws ClassNotFoundException, SQLException {
-		BookCopiesDAO adao = new BookCopiesDAO(conn);
-		//BookCopies toUpdate = adao.readBookCopies(6);
+	public void test_update_book_copies() throws ClassNotFoundException, SQLException {
+		BookCopiesDAO bcdao = new BookCopiesDAO(conn);
+		BookCopies toUpdate = bcdao.readBookCopies(1, 4); // Book: The Lost Tribe , Branch Arkansas
+		Assert.assertEquals(100, toUpdate.getNoOfCopies().intValue());
 
-		//toUpdate.setValues(Arrays.asList("Mystery & Suspense"));
+		toUpdate.setNoOfCopies(toUpdate.getNoOfCopies() + 1);
+		bcdao.updateBookCopies(toUpdate);
+		BookCopies result = bcdao.readBookCopies(1, 4);
 
-		//adao.updateBookCopies(toUpdate);
-		//BookCopies result = adao.readBookCopies(6);
-
-		//Assert.assertEquals(toUpdate, result);
+		Assert.assertEquals(toUpdate, result);
 	}
 
 	@Test
-	@Ignore("Not ready yet")
-	public void test_delete_book_authors() throws ClassNotFoundException, SQLException {
-		BookCopiesDAO adao = new BookCopiesDAO(conn);
-		//BookCopies toDelete = adao.readBookCopies(6);
+	public void test_read_all_book_enough_copies_returns_size() throws ClassNotFoundException, SQLException {
+		BookCopiesDAO bcdao = new BookCopiesDAO(conn);
+		List<Book> books = bcdao.readAllBookCopies_Books_EnoughCopies(50); // Branch Arkansas
 
-		//adao.deleteBookCopies(toDelete);
-		//BookCopies result = adao.readBookCopies(6);
-
-		//Assert.assertNotEquals(toDelete, result);
-		//Assert.assertNull(result);
+		Assert.assertEquals(17, books.size());
 	}
 
 	@Test
-	public void test_read_all_book_authors_returns_size() throws ClassNotFoundException, SQLException {
-		BookCopiesDAO adao = new BookCopiesDAO(conn);
-		List<BookCopies> books = adao.readAllBookCopies();
+	public void test_read_all_book_copies_books_returns_size() throws ClassNotFoundException, SQLException {
+		BookCopiesDAO bcdao = new BookCopiesDAO(conn);
+		List<Book> books = bcdao.readAllBookCopies_Books(50); // Branch Arkansas
 
-		Assert.assertEquals(books.size(), 1000);
+		Assert.assertEquals(18, books.size());
 	}
 
+	@Test
+	public void test_read_all_book_copies_branches_returns_size() throws ClassNotFoundException, SQLException {
+		BookCopiesDAO bcdao = new BookCopiesDAO(conn);
+		List<LibraryBranch> branches = bcdao.readAllBookCopies_Branches(1026); // Book: Dynamic Programming Ed2.
+
+		Assert.assertEquals(2, branches.size());
+	}
+
+	@Test
+	public void test_read_all_book_copies() throws ClassNotFoundException, SQLException {
+		BookCopiesDAO bcdao = new BookCopiesDAO(conn);
+		List<BookCopies> bc = bcdao.readAllBookCopies();
+
+		Assert.assertNotEquals(1000, bc.size());
+	}
 	
-
 	/*
 	 * @Test(expected = Exception.class) public void t() {
 	 * 

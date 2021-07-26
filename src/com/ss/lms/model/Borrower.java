@@ -106,8 +106,9 @@ public class Borrower extends BaseModel {
 	@Override
 	public String toString() {
 
-		return "Borrower CardNo: " + cardNo + "\nBorrower Name: "
-				+ (borrowerName != null ? borrowerName : Util.fSysAlert.format("Name Empty"))
+		return Util.fSysOutput.format("Borrower CardNo: " + cardNo)
+				+ Util.fSysOutput.format("\nBorrower Name: "
+						+ (borrowerName != null ? borrowerName : Util.fSysAlert.format("Name Empty")))
 				+ Util.fSysOutput.format("\nBorrower Address: "
 						+ (borrowerAddress != null ? borrowerAddress : Util.fSysAlert.format("Address Empty")))
 				+ Util.fSysOutput.format("\nBorrower Phone: "
@@ -161,6 +162,34 @@ public class Borrower extends BaseModel {
 	@Override
 	public String getName() {
 		return getBorrowerName();
+	}
+
+	/**
+	 * @return the libBranches
+	 */
+	public List<LibraryBranch> getLibBranches() {
+		return libBranches;
+	}
+
+	/**
+	 * @param libBranches the libBranches to set
+	 */
+	public void setLibBranches(List<LibraryBranch> libBranches) {
+		this.libBranches = libBranches;
+	}
+
+	/**
+	 * @return the books
+	 */
+	public List<Book> getBooks() {
+		return books;
+	}
+
+	/**
+	 * @param books the books to set
+	 */
+	public void setBooks(List<Book> books) {
+		this.books = books;
 	}
 
 }

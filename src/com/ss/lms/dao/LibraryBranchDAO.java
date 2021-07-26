@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.ss.lms.model.LibraryBranch;
-import com.ss.lms.model.LibraryBranch;
 
 /**
  * @libBranch Bruno

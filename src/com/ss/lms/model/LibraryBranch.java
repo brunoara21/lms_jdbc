@@ -140,5 +140,17 @@ public class LibraryBranch extends BaseModel{
 		public String getName() {
 			return getBranchName();
 		}
+		/**
+		 * @return the bookLoans
+		 */
+		public List<BookLoans> getBookLoans() {
+			return bookLoans;
+		}
+		/**
+		 * @param bookLoans the bookLoans to set
+		 */
+		public void setBookLoans(List<BookLoans> bookLoans) {
+			this.bookLoans = bookLoans;
+		}
 		
 }

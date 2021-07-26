@@ -49,6 +49,8 @@ public class AdminService extends BaseService{
 			return addLibraryBranch((LibraryBranch) toAdd);
 		} else if (toAdd instanceof Book) {
 			return addBook((Book) toAdd);
+		} else if (toAdd instanceof Borrower) {
+			return addBorrower((Borrower) toAdd);
 		}
 
 		return "Something went wrong when adding.";
@@ -65,6 +67,8 @@ public class AdminService extends BaseService{
 			return updateLibraryBranch((LibraryBranch) toUpdate);
 		} else if (toUpdate instanceof Book) {
 			return updateBook((Book) toUpdate);
+		} else if (toUpdate instanceof Borrower) {
+			return updateBorrower((Borrower) toUpdate);
 		}
 
 		return "Something went wrong when updating.";
@@ -81,6 +85,8 @@ public class AdminService extends BaseService{
 			return deleteLibraryBranch((LibraryBranch) toDelete);
 		} else if (toDelete instanceof Book) {
 			return deleteBook((Book) toDelete);
+		} else if (toDelete instanceof Borrower) {
+			return deleteBorrower((Borrower) toDelete);
 		}
 
 		return "Something went wrong when deleting.";
@@ -199,7 +205,7 @@ public class AdminService extends BaseService{
 				BookAuthorsDAO badao = new BookAuthorsDAO(conn);
 				BookAuthors ba = new BookAuthors();
 				ba.setValues(Arrays.asList(toUpdate, book));
-				badao.updateBookAuthors_Author(ba, fromUpdate);
+				badao.updateBookAuthors_Author(ba, fromUpdate.getAuthorId());
 				conn.commit();
 				return "Author '" + toUpdate.getName() + "' to '"+ fromUpdate.getName()+"' successfully updated from Book";
 
@@ -283,7 +289,7 @@ public class AdminService extends BaseService{
 				BookGenresDAO bgdao = new BookGenresDAO(conn);
 				BookGenres bg = new BookGenres();
 				bg.setValues(Arrays.asList(toUpdate, book));
-				bgdao.updateBookGenres_Genre(bg, fromUpdate);
+				bgdao.updateBookGenres_Genre(bg, fromUpdate.getGenreId());
 				conn.commit();
 				return "Genre '" + toUpdate.getName() + "' to '"+ fromUpdate.getName()+"' successfully updated from Book";
 
@@ -391,8 +397,8 @@ public class AdminService extends BaseService{
 		try {
 			try {
 				conn = util.getConnection();
-				BookDAO pdao = new BookDAO(conn);
-				pdao.deleteBook(toDelete);
+				BookDAO bdao = new BookDAO(conn);
+				bdao.deleteBook(toDelete);
 				conn.commit();
 				return "Book '" + toDelete.getTitle() + "' successfully deleted";
 
@@ -424,7 +430,7 @@ public class AdminService extends BaseService{
 
 				List<Book> books = bdao.readAllBooks();
 				for(Book b: books) {
-					b.setBookAuthors(badao.readBookAuthors_Authors(b.getBookId()));
+					b.setBookAuthors(badao.readAllBookAuthors_Authors(b.getBookId()));
 					b.setBookGenres(bgdao.readAllBookGenres_Genres(b.getBookId()));
 					b.setBookBranches(bcdao.readAllBookCopies_Branches(b.getBookId()));
 				}

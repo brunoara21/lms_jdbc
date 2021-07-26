@@ -161,4 +161,18 @@ public class Publisher extends BaseModel {
 		return getPublisherName();
 	}
 
+	/**
+	 * @return the books
+	 */
+	public List<Book> getBooks() {
+		return books;
+	}
+
+	/**
+	 * @param books the books to set
+	 */
+	public void setBooks(List<Book> books) {
+		this.books = books;
+	}
+
 }

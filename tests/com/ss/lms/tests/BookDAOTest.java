@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ss.lms.dao.BookDAO;
@@ -40,8 +39,7 @@ public class BookDAOTest {
 
 	@Test
 	public void test_column_values() {
-		List<String> columnNames = Arrays.asList("Title", "Publisher ID", "Authors", "Genres", "Library Branches",
-				"Copies");
+		List<String> columnNames = Arrays.asList("Title", "Publisher ID", "Authors", "Genres", "Library Branches");
 
 		Book book = new Book();
 		List<String> columns = book.getValues();
@@ -52,8 +50,7 @@ public class BookDAOTest {
 	@Test
 	public void test_column_requirements() {
 		Book book = new Book();
-		List<String> columnNames = Arrays.asList("Title", "Publisher ID", "Authors", "Genres", "Library Branches",
-				"Copies");
+		List<String> columnNames = Arrays.asList("Title", "Publisher ID", "Authors", "Genres", "Library Branches");
 		List<String> columns = book.getValues();
 
 		Assert.assertEquals(book.checkIfRequired(null), false);
@@ -69,8 +66,6 @@ public class BookDAOTest {
 		Assert.assertEquals(columns.get(3), columnNames.get(3));
 		Assert.assertEquals(book.checkIfRequired(columns.get(4)), false);
 		Assert.assertEquals(columns.get(4), columnNames.get(4));
-		Assert.assertEquals(book.checkIfRequired(columns.get(5)), false);
-		Assert.assertEquals(columns.get(5), columnNames.get(5));
 	}
 
 	@Test
@@ -92,27 +87,25 @@ public class BookDAOTest {
 	}
 
 	@Test
-	@Ignore("Not ready yet")
 	public void test_update_book() throws ClassNotFoundException, SQLException {
-		BookDAO adao = new BookDAO(conn);
-		Book toUpdate = adao.readBook(6);
+		BookDAO bdao = new BookDAO(conn);
+		Book toUpdate = bdao.readBook(6);
 
-		toUpdate.setValues(Arrays.asList("Mystery & Suspense"));
+		toUpdate.setValues(Arrays.asList("Five", null, null, null, null));
 
-		adao.updateBook(toUpdate);
-		Book result = adao.readBook(6);
+		bdao.updateBook(toUpdate);
+		Book result = bdao.readBook(6);
 
 		Assert.assertEquals(toUpdate, result);
 	}
 
 	@Test
-	@Ignore("Not ready yet")
 	public void test_delete_book() throws ClassNotFoundException, SQLException {
-		BookDAO adao = new BookDAO(conn);
-		Book toDelete = adao.readBook(6);
+		BookDAO bdao = new BookDAO(conn);
+		Book toDelete = bdao.readBook(6);
 
-		adao.deleteBook(toDelete);
-		Book result = adao.readBook(6);
+		bdao.deleteBook(toDelete);
+		Book result = bdao.readBook(6);
 
 		Assert.assertNotEquals(toDelete, result);
 		Assert.assertNull(result);
@@ -123,7 +116,7 @@ public class BookDAOTest {
 		BookDAO adao = new BookDAO(conn);
 		List<Book> books = adao.readAllBooks();
 
-		Assert.assertEquals(books.size(), 1000);
+		Assert.assertEquals(books.size(), 1004);
 	}
 
 	@Test

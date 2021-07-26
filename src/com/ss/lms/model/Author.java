@@ -105,4 +105,18 @@ public class Author extends BaseModel {
 		return getAuthorName();
 	}
 
+	/**
+	 * @return the books
+	 */
+	public List<Book> getBooks() {
+		return books;
+	}
+
+	/**
+	 * @param books the books to set
+	 */
+	public void setBooks(List<Book> books) {
+		this.books = books;
+	}
+
 }

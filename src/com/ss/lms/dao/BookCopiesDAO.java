@@ -42,17 +42,8 @@ public class BookCopiesDAO extends BaseDAO<BookCopies> {
 				bookCopies.getNoOfCopies(), bookCopies.getBook().getBookId(), bookCopies.getBranch().getBranchId()));
 	}
 
-	public void deleteBookCopies(BookCopies bookCopies) throws ClassNotFoundException, SQLException {
-		prepareStmt("DELETE FROM tbl_book_copies WHERE bookId = ? AND branchId = ?",
-				Arrays.asList(bookCopies.getBook().getBookId(), bookCopies.getBranch().getBranchId()));
-
-	}
-
-	public List<BookCopies> readAllBookCopies() throws ClassNotFoundException, SQLException {
-		return readStmt("SELECT * FROM tbl_book_copies", null);
-	}
-
-	public List<Book> readAllBookCopies_Books_EnoughCopies(Integer branchId) throws ClassNotFoundException, SQLException {
+	public List<Book> readAllBookCopies_Books_EnoughCopies(Integer branchId)
+			throws ClassNotFoundException, SQLException {
 		ResultSet rs = readStmtResultSet("SELECT tbl_book.bookId, title, publisherId FROM tbl_book_copies "
 				+ "INNER JOIN tbl_book ON tbl_book.bookId = tbl_book_copies.bookId "
 				+ "INNER JOIN tbl_library_branch ON tbl_book_copies.branchId = tbl_library_branch.branchId "
@@ -67,7 +58,7 @@ public class BookCopiesDAO extends BaseDAO<BookCopies> {
 		}
 		return books;
 	}
-	
+
 	public List<Book> readAllBookCopies_Books(Integer branchId) throws ClassNotFoundException, SQLException {
 		ResultSet rs = readStmtResultSet("SELECT tbl_book.bookId, title, publisherId FROM tbl_book_copies "
 				+ "INNER JOIN tbl_book ON tbl_book.bookId = tbl_book_copies.bookId "
@@ -105,6 +96,10 @@ public class BookCopiesDAO extends BaseDAO<BookCopies> {
 	public BookCopies readBookCopies(Integer bookId, Integer branchId) throws ClassNotFoundException, SQLException {
 		return readStmtOne("SELECT * FROM tbl_book_copies WHERE bookId = ? AND branchId = ?",
 				Arrays.asList(bookId, branchId));
+	}
+
+	public List<BookCopies> readAllBookCopies() throws ClassNotFoundException, SQLException {
+		return readStmt("SELECT * FROM tbl_book_copies", null);
 	}
 
 	@Override

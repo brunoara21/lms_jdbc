@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ss.lms.dao.AuthorDAO;
@@ -84,44 +83,49 @@ public class BookAuthorsDAOTest {
 		BookAuthors result = badao.readBookAuthors(b.getBookId(), a.getAuthorId());
 
 		Assert.assertEquals(toAdd, result);
-		//Assert.assertEquals("BookAuthors ID: " + pK + "\nBookAuthors Title: " + bookTitle + "\nPublisher ID: " + "Publisher Empty",result.toStringTest());
 	}
 
 	@Test
-	@Ignore("Not ready yet")
-	public void test_update_book_authors() throws ClassNotFoundException, SQLException {
-		BookAuthorsDAO adao = new BookAuthorsDAO(conn);
-		//BookAuthors toUpdate = adao.readBookAuthors(6);
+	public void test_update_book_author() throws ClassNotFoundException, SQLException {
+		BookAuthorsDAO badao = new BookAuthorsDAO(conn);
 
-		//toUpdate.setValues(Arrays.asList("Mystery & Suspense"));
+		BookAuthors toUpdate = badao.readBookAuthors(110, 1); // Book: Human Resources , Author: Stephen King
 
-		//adao.updateBookAuthors(toUpdate);
-		//BookAuthors result = adao.readBookAuthors(6);
+		badao.updateBookAuthors_Author(toUpdate, 10);
+		BookAuthors result = badao.readBookAuthors(110, 10);
 
-		//Assert.assertEquals(toUpdate, result);
+
+		Assert.assertNotEquals(toUpdate, result);
 	}
 
 	@Test
-	@Ignore("Not ready yet")
 	public void test_delete_book_authors() throws ClassNotFoundException, SQLException {
-		BookAuthorsDAO adao = new BookAuthorsDAO(conn);
-		//BookAuthors toDelete = adao.readBookAuthors(6);
+		BookAuthorsDAO badao = new BookAuthorsDAO(conn);
 
-		//adao.deleteBookAuthors(toDelete);
-		//BookAuthors result = adao.readBookAuthors(6);
+		BookAuthors toDelete = badao.readBookAuthors(110,1);
 
-		//Assert.assertNotEquals(toDelete, result);
-		//Assert.assertNull(result);
+		badao.deleteBookAuthors(toDelete);  
+		BookAuthors result =	badao.readBookAuthors(110, 1);
+
+		Assert.assertNotEquals(toDelete, result); 
+		Assert.assertNull(result);
 	}
-
+	
 	@Test
 	public void test_read_all_book_authors_returns_size() throws ClassNotFoundException, SQLException {
-		BookAuthorsDAO adao = new BookAuthorsDAO(conn);
-		List<BookAuthors> books = adao.readAllBookAuthors();
+		BookAuthorsDAO badao = new BookAuthorsDAO(conn);
+		List<BookAuthors> authors = badao.readAllBookAuthors();
 
-		Assert.assertEquals(books.size(), 1000);
+		Assert.assertEquals(1006, authors.size());
 	}
 
+	@Test
+	public void test_read_all_book_authors_returns_size_for_book() throws ClassNotFoundException, SQLException {
+		BookAuthorsDAO badao = new BookAuthorsDAO(conn);
+		List<Author> authors = badao.readAllBookAuthors_Authors(1026);
+
+		Assert.assertEquals(2, authors.size());
+	}
 	
 
 	/*

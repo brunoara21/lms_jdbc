@@ -86,6 +86,8 @@ public class BookCopies extends BaseModel {
 			return false;
 		}
 		
+		
+		
 		@Override
 		public int hashCode() {
 			return Objects.hash(book, branch);

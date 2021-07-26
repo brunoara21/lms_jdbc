@@ -7,7 +7,7 @@ package com.ss.lms.ui;
  * @author Bruno
  *
  */
-public class main {
+public class Main {
 
 	/**
 	 * @param args
@@ -20,6 +20,7 @@ public class main {
 		menus.mainMenu();
 		
 		
+		return;	
 	}
 
 }

@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import com.ss.lms.service.Util;
-
 /**
  * @genre Bruno
  *
@@ -107,6 +105,20 @@ public class Genre extends BaseModel {
 	@Override
 	public String getName() {
 		return getGenreName();
+	}
+
+	/**
+	 * @return the books
+	 */
+	public List<Book> getBooks() {
+		return books;
+	}
+
+	/**
+	 * @param books the books to set
+	 */
+	public void setBooks(List<Book> books) {
+		this.books = books;
 	}
 
 }

@@ -10,8 +10,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import com.ss.lms.model.Book;
-
 /**
  * @author Bruno
  * @param <T>

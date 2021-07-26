@@ -181,30 +181,19 @@ public class Book extends BaseModel {
 	public void setValues(List<Object> inputs) {
 		if (inputs.get(0) != null) { // Title
 			this.title = inputs.get(0).toString();
-		} else {
-			System.out.println("Title NULL");
-		}
+		} 
 		if (inputs.get(1) != null) { // PublisherId
 			this.publisher = (Publisher) inputs.get(1);
-		} else {
-			System.out.println("Publisher NULL");
 		}
 		if (inputs.get(2) != null) { // Authors
 			this.bookAuthors = (List<Author>) (List<?>) inputs.get(2);
-		} else {
-			System.out.println("Authors NULL");
-		}
+		} 
 		if (inputs.get(3) != null) { // Genres
 			this.bookGenres = (List<Genre>) (List<?>) inputs.get(3);
-		} else {
-			System.out.println("Genres NULL");
 		}
 		if (inputs.get(4) != null) { // Library Branches
 			this.bookBranches = (List<LibraryBranch>) (List<?>) inputs.get(4);
-		} else {
-			System.out.println("LibBranch NULL");
-		}
-
+		} 
 	}
 
 	@Override

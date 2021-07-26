@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.ss.lms.model.Author;
-import com.ss.lms.model.Book;
 import com.ss.lms.model.BookAuthors;
 
 /**
@@ -22,13 +21,11 @@ public class BookAuthorsDAO extends BaseDAO<BookAuthors> {
 
 	private BookDAO bdao = null;
 	private AuthorDAO adao = null;
-	private PublisherDAO pdao = null;
 
 	public BookAuthorsDAO(Connection conn) {
 		super(conn);
 		bdao = new BookDAO(conn);
 		adao = new AuthorDAO(conn);
-		pdao = new PublisherDAO(conn);
 	}
 
 	public Integer createBookAuthors(BookAuthors bookAuthors) throws ClassNotFoundException, SQLException {
@@ -36,15 +33,10 @@ public class BookAuthorsDAO extends BaseDAO<BookAuthors> {
 				Arrays.asList(bookAuthors.getAuthor().getAuthorId(), bookAuthors.getBook().getBookId()));
 	}
 	
-	public void updateBookAuthors_Book(BookAuthors bookAuthors) throws ClassNotFoundException, SQLException {
-		prepareStmt("UPDATE tbl_book_authors SET bookId = ? WHERE bookId = ? AND authorId = ?",
-				Arrays.asList(bookAuthors.getBook().getBookId(), bookAuthors.getBook().getBookId(),
-						bookAuthors.getAuthor().getAuthorId()));
-	}
 
-	public void updateBookAuthors_Author(BookAuthors bookAuthors, Author fromUpdate) throws ClassNotFoundException, SQLException {
+	public void updateBookAuthors_Author(BookAuthors bookAuthors, Integer authorId) throws ClassNotFoundException, SQLException {
 		prepareStmt("UPDATE tbl_book_authors SET authorId = ? WHERE bookId = ? AND authorId = ?",
-				Arrays.asList(fromUpdate.getAuthorId(), bookAuthors.getBook().getBookId(),
+				Arrays.asList(authorId, bookAuthors.getBook().getBookId(),
 						bookAuthors.getAuthor().getAuthorId()));
 	}
 
@@ -54,27 +46,12 @@ public class BookAuthorsDAO extends BaseDAO<BookAuthors> {
 
 	}
 
-	public List<BookAuthors> readAllBookAuthors() throws ClassNotFoundException, SQLException {
+	public List<BookAuthors> readAllBookAuthors()  throws ClassNotFoundException, SQLException {
 		return readStmt("SELECT * FROM tbl_book_authors", null);
+	
 	}
 
-	public List<Book> readBookAuthors_Books(Integer authorId) throws ClassNotFoundException, SQLException {
-		ResultSet rs = readStmtResultSet("SELECT tbl_book.bookId, title, publisherId FROM tbl_book_authors "
-				+ "INNER JOIN tbl_book ON tbl_book.bookId = tbl_book_authors.bookId "
-				+ "INNER JOIN tbl_author ON tbl_book_authors.authorId = tbl_author.authorId "
-				+ "WHERE tbl_author.authorId = ?;", Arrays.asList(authorId));
-		List<Book> books = new ArrayList<>();
-		while (rs.next()) {
-			Book book = new Book();
-			book.setBookId(rs.getInt("bookId"));
-			book.setTitle(rs.getString("title"));
-			book.setPublisher(pdao.readPublisher(rs.getInt("publisherId")));
-			books.add(book);
-		}
-		return books;
-	}
-
-	public List<Author> readBookAuthors_Authors(Integer bookId) throws ClassNotFoundException, SQLException {
+	public List<Author> readAllBookAuthors_Authors(Integer bookId) throws ClassNotFoundException, SQLException {
 		ResultSet rs = readStmtResultSet("SELECT tbl_author.authorId, authorName FROM tbl_book_authors "
 				+ "INNER JOIN tbl_book ON tbl_book.bookId = tbl_book_authors.bookId "
 				+ "INNER JOIN tbl_author ON tbl_book_authors.authorId = tbl_author.authorId "

@@ -6,6 +6,7 @@ package com.ss.lms.model;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Bruno
@@ -152,6 +153,22 @@ public class BookLoans extends BaseModel{
 		 */
 		public void setBorrower(Borrower borrower) {
 			this.borrower = borrower;
+		}
+		@Override
+		public int hashCode() {
+			return Objects.hash(book, borrower, branch);
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			BookLoans other = (BookLoans) obj;
+			return Objects.equals(book, other.book) && Objects.equals(borrower, other.borrower)
+					&& Objects.equals(branch, other.branch);
 		}
 		
 		

@@ -11,15 +11,14 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.ss.lms.dao.GenreDAO;
-import com.ss.lms.dao.BookGenresDAO;
 import com.ss.lms.dao.BookDAO;
-import com.ss.lms.model.Genre;
+import com.ss.lms.dao.BookGenresDAO;
+import com.ss.lms.dao.GenreDAO;
 import com.ss.lms.model.Book;
 import com.ss.lms.model.BookGenres;
+import com.ss.lms.model.Genre;
 import com.ss.lms.service.Util;
 
 /**
@@ -68,14 +67,14 @@ public class BookGenresDAOTest {
 	}
 
 	@Test
-	public void test_add_book_authors() throws ClassNotFoundException, SQLException {
+	public void test_add_book_genres() throws ClassNotFoundException, SQLException {
 		BookGenres toAdd = new BookGenres();
 
 		GenreDAO adao = new GenreDAO(conn);
 		BookDAO bdao = new BookDAO(conn);
 		Genre g = adao.readGenre(1); // Action
-		Book b = bdao.readBook(211);  // Tomboy
-		
+		Book b = bdao.readBook(211); // Tomboy
+
 		toAdd.setValues(Arrays.asList(g, b));
 
 		BookGenresDAO badao = new BookGenresDAO(conn);
@@ -84,45 +83,49 @@ public class BookGenresDAOTest {
 		BookGenres result = badao.readBookGenres(b.getBookId(), g.getGenreId());
 
 		Assert.assertEquals(toAdd, result);
-		//Assert.assertEquals("BookGenres ID: " + pK + "\nBookGenres Title: " + bookTitle + "\nPublisher ID: " + "Publisher Empty",result.toStringTest());
 	}
 
 	@Test
-	@Ignore("Not ready yet")
-	public void test_update_book_authors() throws ClassNotFoundException, SQLException {
-		BookGenresDAO adao = new BookGenresDAO(conn);
-		//BookGenres toUpdate = adao.readBookGenres(6);
+	public void test_update_book_genre() throws ClassNotFoundException, SQLException {
+		BookGenresDAO bgdao = new BookGenresDAO(conn);
 
-		//toUpdate.setValues(Arrays.asList("Mystery & Suspense"));
+		BookGenres toUpdate = bgdao.readBookGenres(3, 1); // Book: Blind , Genre: Action
 
-		//adao.updateBookGenres(toUpdate);
-		//BookGenres result = adao.readBookGenres(6);
+		bgdao.updateBookGenres_Genre(toUpdate, 3);
+		BookGenres result = bgdao.readBookGenres(3, 3);
 
-		//Assert.assertEquals(toUpdate, result);
+
+		Assert.assertNotEquals(toUpdate, result);
 	}
 
 	@Test
-	@Ignore("Not ready yet")
-	public void test_delete_book_authors() throws ClassNotFoundException, SQLException {
-		BookGenresDAO adao = new BookGenresDAO(conn);
-		//BookGenres toDelete = adao.readBookGenres(6);
+	public void test_delete_book_genres() throws ClassNotFoundException, SQLException {
+		BookGenresDAO bgdao = new BookGenresDAO(conn);
 
-		//adao.deleteBookGenres(toDelete);
-		//BookGenres result = adao.readBookGenres(6);
+		BookGenres toDelete = bgdao.readBookGenres(3,1);
 
-		//Assert.assertNotEquals(toDelete, result);
-		//Assert.assertNull(result);
+		bgdao.deleteBookGenres(toDelete);  
+		BookGenres result =	bgdao.readBookGenres(3, 1);
+
+		Assert.assertNotEquals(toDelete, result); 
+		Assert.assertNull(result);
 	}
-
-	@Test
-	public void test_read_all_book_authors_returns_size() throws ClassNotFoundException, SQLException {
-		BookGenresDAO adao = new BookGenresDAO(conn);
-		List<BookGenres> books = adao.readAllBookGenres();
-
-		Assert.assertEquals(books.size(), 6);
-	}
-
 	
+	@Test
+	public void test_read_all_book_genres_returns_size() throws ClassNotFoundException, SQLException {
+		BookGenresDAO bgdao = new BookGenresDAO(conn);
+		List<BookGenres> genres = bgdao.readAllBookGenres();
+
+		Assert.assertEquals(12, genres.size());
+	}
+
+	@Test
+	public void test_read_all_book_genres_returns_size_for_book() throws ClassNotFoundException, SQLException {
+		BookGenresDAO bgdao = new BookGenresDAO(conn);
+		List<Genre> genres = bgdao.readAllBookGenres_Genres(1);
+
+		Assert.assertEquals(2, genres.size());
+	}
 
 	/*
 	 * @Test(expected = Exception.class) public void t() {

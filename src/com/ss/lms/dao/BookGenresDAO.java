@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.ss.lms.model.Author;
-import com.ss.lms.model.Book;
 import com.ss.lms.model.BookGenres;
 import com.ss.lms.model.Genre;
 
@@ -23,13 +21,11 @@ public class BookGenresDAO extends BaseDAO<BookGenres> {
 
 	private BookDAO bdao = null;
 	private GenreDAO gdao = null;
-	private PublisherDAO pdao = null;
 
 	public BookGenresDAO(Connection conn) {
 		super(conn);
 		bdao = new BookDAO(conn);
 		gdao = new GenreDAO(conn);
-		pdao = new PublisherDAO(conn);
 	}
 
 	public Integer createBookGenres(BookGenres bookGenres) throws ClassNotFoundException, SQLException {
@@ -37,15 +33,9 @@ public class BookGenresDAO extends BaseDAO<BookGenres> {
 				Arrays.asList(bookGenres.getGenre().getGenreId(), bookGenres.getBook().getBookId()));
 	}
 
-	public void updateBookGenres_Book(BookGenres bookGenres) throws ClassNotFoundException, SQLException {
-		prepareStmt("UPDATE tbl_book_genres SET bookId = ? WHERE bookId = ? AND genreId = ?",
-				Arrays.asList(bookGenres.getBook().getBookId(), bookGenres.getBook().getBookId(),
-						bookGenres.getGenre().getGenreId()));
-	}
-
-	public void updateBookGenres_Genre(BookGenres bookGenres, Genre fromUpdate) throws ClassNotFoundException, SQLException {
+	public void updateBookGenres_Genre(BookGenres bookGenres, Integer genreId) throws ClassNotFoundException, SQLException {
 		prepareStmt("UPDATE tbl_book_genres SET genreId = ? WHERE bookId = ? AND genreId = ?",
-				Arrays.asList(fromUpdate.getGenreId(), bookGenres.getBook().getBookId(),
+				Arrays.asList(genreId, bookGenres.getBook().getBookId(),
 						bookGenres.getGenre().getGenreId()));
 	}
 
@@ -55,24 +45,8 @@ public class BookGenresDAO extends BaseDAO<BookGenres> {
 
 	}
 
-	public List<BookGenres> readAllBookGenres() throws ClassNotFoundException, SQLException {
-		return readStmt("SELECT * FROM tbl_book_genres", null);
-	}
-
-	public List<Book> readAllBookGenres_Books(Integer genreId) throws ClassNotFoundException, SQLException {
-		ResultSet rs = readStmtResultSet("SELECT tbl_genre.genreId, genreName FROM tbl_book_genres "
-				+ "INNER JOIN tbl_book ON tbl_book.bookId = tbl_book_genres.bookId "
-				+ "INNER JOIN tbl_genre ON tbl_book_genres.genreId = tbl_genre.genreId "
-				+ "WHERE tbl_book.bookId = ?;", Arrays.asList(genreId));
-		List<Book> books = new ArrayList<>();
-		while (rs.next()) {
-			Book book = new Book();
-			book.setBookId(rs.getInt("bookId"));
-			book.setTitle(rs.getString("title"));
-			book.setPublisher(pdao.readPublisher(rs.getInt("publisherId")));
-			books.add(book);
-		}
-		return books;
+	public BookGenres readBookGenres(Integer bookId, Integer genreId) throws ClassNotFoundException, SQLException{
+		return readStmtOne("SELECT * FROM tbl_book_genres WHERE bookId = ? AND genreId = ?", Arrays.asList(bookId, genreId));
 	}
 
 	public List<Genre> readAllBookGenres_Genres(Integer bookId) throws ClassNotFoundException, SQLException {
@@ -90,9 +64,9 @@ public class BookGenresDAO extends BaseDAO<BookGenres> {
 		return genres;
 	}
 
-	public BookGenres readBookGenres(Integer bookId, Integer genreId) throws ClassNotFoundException, SQLException {
-		return readStmtOne("SELECT * FROM tbl_book_genres WHERE bookId = ? AND genreId = ?",
-				Arrays.asList(bookId, genreId));
+	public List<BookGenres> readAllBookGenres()  throws ClassNotFoundException, SQLException {
+		return readStmt("SELECT * FROM tbl_book_genres", null);
+	
 	}
 
 	@Override
